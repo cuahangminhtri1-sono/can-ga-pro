@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INDOCHINE PARFUM – Sổ Tay Sản Xuất (Thẻ + Quy Trình)</title>
+<style>
+:root{
+  --teal:#0f766e; --teal-d:#0b5550; --green:#16a34a; --green-bg:#ecfdf5;
+  --amber:#b45309; --amber-bg:#fff7ed; --red:#dc2626; --red-bg:#fef2f2;
+  --ink:#111827; --muted:#4b5563; --line:#d1d5db; --bg:#f6f7fb;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:920px;margin:0 auto;padding:14px}
+/* NAV */
+.appnav{position:sticky;top:0;z-index:60;background:#fff;border-bottom:2px solid var(--teal);box-shadow:0 2px 8px rgba(0,0,0,.06);padding:8px 10px}
+.appnav .brand{font-weight:800;color:var(--teal);font-size:14px;margin-bottom:7px;text-align:center;letter-spacing:.5px}
+.navrow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.navrow::-webkit-scrollbar{display:none}
+.navbtn{flex:none;border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:700;font-size:12.5px;padding:8px 12px;border-radius:20px;cursor:pointer;white-space:nowrap}
+.navbtn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.section{display:none}
+h1{font-size:22px;color:var(--teal);margin:14px 0 4px;line-height:1.2}
+.sub{color:var(--muted);font-weight:700;margin-bottom:12px;font-size:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 4px 16px rgba(0,0,0,.05)}
+.card h2{margin:0 0 10px;font-size:18px;color:var(--teal-d);display:flex;align-items:center;gap:8px}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.info div{background:var(--green-bg);border-left:5px solid var(--teal);border-radius:10px;padding:10px 12px;font-size:14px}
+.info b{display:block;color:var(--teal);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.warnbox{background:var(--amber-bg);border-left:5px solid var(--amber);border-radius:10px;padding:12px 14px;margin:10px 0;font-weight:700;color:#7c2d12}
+.critbox{background:var(--red-bg);border-left:5px solid var(--red);border-radius:10px;padding:12px 14px;margin:10px 0;font-weight:700;color:#7f1d1d}
+.num{display:inline-block;background:var(--teal);color:#fff;font-weight:800;padding:1px 9px;border-radius:8px;font-size:16px;white-space:nowrap;margin:1px 0}
+.numbig{font-size:18px}
+ul.clean{list-style:none;padding-left:0;margin:8px 0}
+ul.clean li{padding:6px 0 6px 26px;position:relative;border-bottom:1px dashed #e5e7eb;font-size:15px}
+ul.clean li:last-child{border-bottom:none}
+ul.clean li:before{content:"▸";position:absolute;left:6px;color:var(--teal);font-weight:900}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:var(--teal);color:#fff}
+tr:nth-child(even) td{background:#f9fafb}
+.tac{text-align:center}
+.key td{background:#ecfdf5 !important}
+/* STEP */
+.step{background:#fff;border:1px solid var(--line);border-radius:16px;margin:14px 0;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.05)}
+.step.done{border-color:var(--green);box-shadow:0 0 0 2px var(--green) inset}
+.step-h{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f0fdfa;border-bottom:1px solid #d1fae5}
+.step.done .step-h{background:var(--green-bg)}
+.badge{flex:none;width:42px;height:42px;border-radius:12px;background:var(--teal);color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+.step.done .badge{background:var(--green)}
+.step-t{font-weight:800;font-size:16px;color:var(--ink);flex:1}
+.step-time{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+.step-b{padding:14px}
+.lbl{font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 4px;color:var(--teal-d)}
+.do-list{margin:0;padding-left:0;list-style:none}
+.do-list li{padding:7px 10px;margin:5px 0;background:#f8fafc;border:1px solid #eef2f7;border-radius:10px;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.do-list li span:first-child{font-weight:600}
+.cue{background:var(--green-bg);border-left:4px solid var(--green);border-radius:8px;padding:8px 12px;margin:6px 0;font-size:14px;font-weight:700;color:#14532d}
+.avoid{background:var(--amber-bg);border-left:4px solid var(--amber);border-radius:8px;padding:8px 12px;margin:6px 0;font-size:14px;font-weight:700;color:#7c2d12}
+.check{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px dashed var(--line);background:#fcfcfd;cursor:pointer;user-select:none}
+.check input{width:24px;height:24px;flex:none;accent-color:var(--green)}
+.check label{font-weight:700;font-size:15px;cursor:pointer}
+/* PROC BAR */
+.procbar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:12px 0;box-shadow:0 3px 12px rgba(0,0,0,.05)}
+.procbar b{color:var(--teal);font-size:13px;white-space:nowrap}
+.procbar .bar{flex:1;min-width:70px;height:12px;background:#e5e7eb;border-radius:99px;overflow:hidden}
+.procbar .bar>i{display:block;height:100%;width:0;background:var(--green);transition:width .25s}
+.procbar .pcount{font-weight:700;font-size:13px;white-space:nowrap}
+.procbar .mini{border:none;border-radius:8px;padding:6px 9px;font-weight:700;font-size:12px;cursor:pointer;color:#fff}
+.mini-print{background:var(--teal)}.mini-reset{background:#6b7280}
+/* SCENT CARDS */
+.grouphd{font-size:15px;font-weight:800;color:var(--teal-d);margin:16px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--teal)}
+.legend2{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0 12px}
+.legend2 span{display:inline-flex;align-items:center;gap:5px}
+.sgrid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:640px){.sgrid{grid-template-columns:1fr 1fr}}
+.scard{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.05);break-inside:avoid}
+.schead{display:flex;align-items:center;gap:7px;padding:9px 11px;background:#f0fdfa;border-bottom:1px solid #d1fae5;flex-wrap:wrap}
+.scode{background:var(--teal);color:#fff;font-weight:800;font-size:11px;padding:2px 7px;border-radius:6px}
+.scode.nam{background:#1d4ed8}.scode.cc{background:#7c3e0a}
+.sname{font-weight:800;font-size:13.5px;color:var(--ink);flex:1;min-width:90px}
+.sbatch{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.cr{display:flex;align-items:center;gap:8px;padding:5px 11px;border-bottom:1px solid #f1f5f9;font-size:13.5px}
+.cr:last-of-type{border-bottom:none}
+.d{width:8px;height:8px;border-radius:50%;flex:none}
+.d.b{background:#b45309}.d.h{background:#be185d}.d.t{background:#15803d}
+.cn{flex:1}
+.cm{background:var(--teal);color:#fff;font-weight:800;padding:0 8px;border-radius:6px;font-size:13px;min-width:30px;text-align:center}
+.cr small{color:var(--muted);width:28px;text-align:right}
+.sfoot{padding:8px 11px;background:#fffbeb;border-top:1px solid #fde68a;font-size:13px;font-weight:700;color:#7c2d12;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sfoot b{color:var(--teal-d)}
+.footer{text-align:center;color:var(--muted);font-size:13px;padding:18px 0 40px}
+@media print{
+  body{background:#fff}
+  .appnav,.mini,.check input,.check{display:none}
+  .step,.card,.scard,.procbar{box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+}
+@media(max-width:560px){
+  h1{font-size:19px} .badge{width:38px;height:38px;font-size:16px}
+  .step-t{font-size:15px} .num{font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<div class="appnav">
+  <div class="brand">🌸 INDOCHINE PARFUM · SỔ TAY SẢN XUẤT</div>
+  <div class="navrow">
+    <button class="navbtn" data-target="home">🏠 Trang chủ</button>
+    <button class="navbtn" data-target="cards-nh">🧴 Thẻ nước hoa</button>
+    <button class="navbtn" data-target="cards-kem">💧 Thẻ kem</button>
+    <button class="navbtn" data-target="proc-nh">📋 QT Nước hoa</button>
+    <button class="navbtn" data-target="proc-kem">📋 QT Kem</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ==================== HOME ==================== -->
+<section class="section" id="home">
+  <h1>🏠 SỔ TAY SẢN XUẤT INDOCHINE</h1>
+  <div class="sub">Tất cả trong 1 file · Chọn trang ở menu trên · Tick quy trình được lưu tự động</div>
+
+  <div class="card">
+    <h2>📖 FILE NÀY CÓ GÌ</h2>
+    <ul class="clean">
+      <li><b>Thẻ nước hoa</b> — 30 mùi (12 nữ · 10 nam · 8 cao cấp), số đã tính sẵn cho 20 chai</li>
+      <li><b>Thẻ kem</b> — 6 công thức (mẻ 1000g)</li>
+      <li><b>Quy trình nước hoa</b> — 10 bước cầm tay chỉ việc, có tiến độ</li>
+      <li><b>Quy trình kem</b> — 10 bước, có chốt chặn nhiệt độ &amp; đo pH</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>👉 CÁCH DÙNG</h2>
+    <ul class="clean">
+      <li>Mở <b>Quy trình</b> tương ứng → làm theo, tick từng bước (thanh tiến độ tự chạy &amp; tự lưu).</li>
+      <li>Tới bước đổ dầu / cân nguyên liệu → mở <b>Thẻ</b> đúng mùi/công thức, đổ theo số trên thẻ.</li>
+      <li>Chỉ bước đổ dầu (nước hoa) &amp; cân (kem) đổi theo mùi — các bước còn lại luôn giống nhau.</li>
+      <li>Bấm 🖨 để in trang đang xem ra giấy dán xưởng.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🔴 LUẬT VÀNG</h2>
+    <div class="critbox">NƯỚC HOA: TUYỆT ĐỐI KHÔNG thêm nước — dầu chỉ tan trong cồn, thêm nước là đục, hỏng mẻ.</div>
+    <div class="critbox">KEM: Chỉ cho actives (arbutin, Vit C) &amp; CHẤT BẢO QUẢN khi kem đã NGUỘI &lt; 40°C. Đo &amp; chỉnh pH về 5.0–5.5.</div>
+    <div class="warnbox">Mùi có chanh/bergamot: dùng loại FCF (khử bắt nắng) &amp; ghi nhãn tránh nắng.</div>
+  </div>
+</section>
+
+<!-- ==================== CARDS NƯỚC HOA (chèn) ==================== -->
+<section class="section" id="cards-nh">
+  <h1>🧴 THẺ PHA NƯỚC HOA</h1>
+  <div class="sub">Số lớn = cho 20 chai · số nhỏ = cho 1 chai (ml) · Đọc trái→phải = thứ tự đổ</div>
+  <div class="legend2">
+    <span><i class="d b"></i> Cuối (nền – đổ trước)</span>
+    <span><i class="d h"></i> Giữa</span>
+    <span><i class="d t"></i> Đầu (đổ sau cùng)</span>
+  </div>
+  <div class="grouphd">👩 NỮ (12 mùi)</div>
+  <div class="sgrid">
+    <div class="scard"><div class="schead"><span class="scode">N01</span><span class="sname">Hoa Hồng Buổi Sáng</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Phấn thơm</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa nhài TH</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa hồng TH</span><b class="cm">48</b><small>2.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N02</span><span class="sname">Chanh Mint Năng Động</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Táo xanh</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa nhài TH</span><b class="cm">4</b><small>0.2</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Chanh xanh FCF</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bạc hà</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>520 ml</b></span><span>dầu 80 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N03</span><span class="sname">Vani Sữa Dừa</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Dừa</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Sữa dừa</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa đào</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N04</span><span class="sname">Gỗ Đàn Hương Ấm Áp</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">40</b><small>2.0</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa hồng TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N05</span><span class="sname">Hoa Nhài Trắng Tinh Khiết</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương trắng</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa nhài TH</span><b class="cm">52</b><small>2.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Neroli (hoa cam)</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N06</span><span class="sname">Biển Hè Dừa Mát</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương trắng</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Dừa</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Muối biển</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Chanh FCF</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Dưa hấu</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>520 ml</b></span><span>dầu 80 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N07</span><span class="sname">Cà Phê Sữa Buổi Sáng</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Cà phê</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Sữa dừa</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N08</span><span class="sname">Oải Hương Đồng Nội</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Oải hương</span><b class="cm">44</b><small>2.2</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa hồng TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N09</span><span class="sname">Dâu Tây Đào</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa đào</span><b class="cm">24</b><small>1.2</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Táo xanh</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Dâu tây</span><b class="cm">24</b><small>1.2</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>520 ml</b></span><span>dầu 80 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N10</span><span class="sname">Phấn Hồng Êm Ái</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Phấn thơm</span><b class="cm">36</b><small>1.8</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa hồng TH</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N11</span><span class="sname">Táo Xám Lạnh</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Cỏ vetiver</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Oải hương</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Táo xanh</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>520 ml</b></span><span>dầu 80 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode">N12</span><span class="sname">Hổ Phách Và Hoa Hồng</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa hồng TH</span><b class="cm">36</b><small>1.8</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa nhài TH</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+  </div>
+
+  <div class="grouphd">👨 NAM (10 mùi)</div>
+  <div class="sgrid">
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 01</span><span class="sname">Rừng Gỗ Sau Mưa</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Cỏ vetiver</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bạch đàn</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 02</span><span class="sname">Tiêu Đen &amp; Gỗ Trầm</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">24</b><small>1.2</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Tiêu đen</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 03</span><span class="sname">Biển Mặn Gió Lộng</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương trắng</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Muối biển</span><b class="cm">24</b><small>1.2</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Chanh xanh FCF</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bạc hà</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>520 ml</b></span><span>dầu 80 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 04</span><span class="sname">Thuốc Lá &amp; Hổ Phách</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Vani</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Thuốc lá</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 05</span><span class="sname">Gừng &amp; Gỗ Tối</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Tiêu đen</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Gừng</span><b class="cm">24</b><small>1.2</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 06</span><span class="sname">Da Thuộc &amp; Cà Phê</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Cà phê</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Da thuộc</span><b class="cm">24</b><small>1.2</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 07</span><span class="sname">Chanh Gừng Tê</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">16</b><small>0.8</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Gừng</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Chanh xanh FCF</span><b class="cm">24</b><small>1.2</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bạc hà</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>520 ml</b></span><span>dầu 80 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 08</span><span class="sname">Cỏ Khói Lửa Trại</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Cỏ vetiver</span><b class="cm">36</b><small>1.8</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Tiêu đen</span><b class="cm">14</b><small>0.7</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>500 ml</b></span><span>dầu 100 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 09</span><span class="sname">Thác Đá Xám</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">18</b><small>0.9</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Cỏ vetiver</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Muối biển</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Oải hương</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bạch đàn</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>520 ml</b></span><span>dầu 80 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode nam">NAM 10 ⭐</span><span class="sname">Gỗ Đen Đêm Khuya</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách TH</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương TH</span><b class="cm">18</b><small>0.9</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ tuyết tùng</span><b class="cm">10</b><small>0.5</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Benzoin</span><b class="cm">6</b><small>0.3</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Tiêu đen</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>490 ml</b></span><span>dầu 110 ml</span></div></div>
+  </div>
+
+  <div class="grouphd">💎 CAO CẤP (8 mùi · Extrait)</div>
+  <div class="legend2"><span>⚠ Ngâm dầu trong cồn ấm 35–40°C cho tan · lọc lạnh 2 lần</span></div>
+  <div class="sgrid">
+    <div class="scard"><div class="schead"><span class="scode cc">C01</span><span class="sname">Oud Đen Việt Nam</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Trầm nhang khô</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách đen</span><b class="cm">30</b><small>1.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Oud VN loại A</span><b class="cm">50</b><small>2.5</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Hoa hồng damask</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode cc">C02</span><span class="sname">Hồng &amp; Long Diên Hương</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Ambroxide</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ đàn hương trắng</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Rose absolute</span><b class="cm">40</b><small>2.0</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Jasmine absolute</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Bergamot</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode cc">C03</span><span class="sname">Oud &amp; Frankincense</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Myrrh (mộc dược)</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Hổ phách</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Oud VN</span><b class="cm">40</b><small>2.0</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Frankincense Oman</span><b class="cm">40</b><small>2.0</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode cc">C04</span><span class="sname">Biển Sâu &amp; Long Diên Hương</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Ambroxide</span><b class="cm">48</b><small>2.4</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương trắng</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Rêu sồi (oakmoss)</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Muối biển Atlantic</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode cc">C05</span><span class="sname">Oud &amp; Da Thuộc</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Labdanum</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Oud VN</span><b class="cm">40</b><small>2.0</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Da thuộc</span><b class="cm">40</b><small>2.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Tiêu đen</span><b class="cm">12</b><small>0.6</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode cc">C06</span><span class="sname">Tuberose &amp; Sáp Ong</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Sáp ong rừng</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Gỗ đàn hương TH</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Tuberose absolute</span><b class="cm">48</b><small>2.4</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Neroli</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode cc">C07</span><span class="sname">Frankincense &amp; Labdanum</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Labdanum</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Benzoin</span><b class="cm">8</b><small>0.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Frankincense Oman</span><b class="cm">60</b><small>3.0</small></div>
+      <div class="cr"><i class="d t"></i><span class="cn">Oải hương Provence</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+
+    <div class="scard"><div class="schead"><span class="scode cc">C08</span><span class="sname">Oud Hồng &amp; Mẫu Đơn</span><span class="sbatch">20 chai</span></div>
+      <div class="cr"><i class="d b"></i><span class="cn">Xạ hương hồng</span><b class="cm">28</b><small>1.4</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Oud VN hồng</span><b class="cm">40</b><small>2.0</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Rose absolute Thổ</span><b class="cm">32</b><small>1.6</small></div>
+      <div class="cr"><i class="d h"></i><span class="cn">Mẫu đơn (peony)</span><b class="cm">20</b><small>1.0</small></div>
+      <div class="sfoot"><span>+ Cồn 96° <b>480 ml</b></span><span>dầu 120 ml</span></div></div>
+  </div>
+</section>
+
+<!-- ==================== CARDS KEM ==================== -->
+<section class="section" id="cards-kem">
+  <h1>💧 THẺ PHA KEM</h1>
+  <div class="sub">Mẻ 1000g · Ô <span style="color:#16a34a;font-weight:800">xanh</span> = cho ở PHA NGUỘI &lt;40°C</div>
+
+  <div class="card">
+    <table>
+      <tr><th>Nguyên liệu (g)</th><th class="tac">K01<br>Ngày</th><th class="tac">K02<br>Đêm</th><th class="tac">K03<br>Nhạy cảm</th></tr>
+      <tr><td>Kem nền</td><td class="tac">720</td><td class="tac">680</td><td class="tac">780</td></tr>
+      <tr><td>Niacinamide</td><td class="tac">50</td><td class="tac">50</td><td class="tac">30</td></tr>
+      <tr class="key"><td>Alpha-Arbutin</td><td class="tac">20</td><td class="tac">30</td><td class="tac">10</td></tr>
+      <tr><td>HA gel 1%</td><td class="tac">100</td><td class="tac">—</td><td class="tac">100</td></tr>
+      <tr><td>Rosehip</td><td class="tac">50</td><td class="tac">80</td><td class="tac">—</td></tr>
+      <tr><td>Jojoba</td><td class="tac">—</td><td class="tac">50</td><td class="tac">50</td></tr>
+      <tr class="key"><td>Vitamin C (SAP)</td><td class="tac">—</td><td class="tac">10</td><td class="tac">—</td></tr>
+      <tr><td>Allantoin</td><td class="tac">5</td><td class="tac">5</td><td class="tac">10</td></tr>
+      <tr><td>Nước cất</td><td class="tac">37</td><td class="tac">77</td><td class="tac">10</td></tr>
+      <tr><td>Tinh dầu</td><td class="tac">5</td><td class="tac">5</td><td class="tac">—</td></tr>
+      <tr class="key"><td>Vitamin E</td><td class="tac">3</td><td class="tac">3</td><td class="tac">2</td></tr>
+      <tr class="key"><td>Chất bảo quản</td><td class="tac">10</td><td class="tac">10</td><td class="tac">8</td></tr>
+      <tr><td><b>Tổng · pH 5.0–5.5</b></td><td class="tac"><b>1000</b></td><td class="tac"><b>1000</b></td><td class="tac"><b>1000</b></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <table>
+      <tr><th>Nguyên liệu (g)</th><th class="tac">KB01<br>Body trắng</th><th class="tac">KB02<br>Cao cấp</th><th class="tac">KB03<br>Mủ trôm</th></tr>
+      <tr><td>Kem nền body</td><td class="tac">775</td><td class="tac">735</td><td class="tac">740</td></tr>
+      <tr><td>Gel mủ trôm <span style="color:var(--muted);font-weight:400">(40 bột+80 nước)</span></td><td class="tac">—</td><td class="tac">—</td><td class="tac">120</td></tr>
+      <tr><td>Bơ hạt mỡ (shea)</td><td class="tac">—</td><td class="tac">100</td><td class="tac">—</td></tr>
+      <tr><td>Niacinamide</td><td class="tac">40</td><td class="tac">30</td><td class="tac">40</td></tr>
+      <tr class="key"><td>Alpha-Arbutin</td><td class="tac">20</td><td class="tac">—</td><td class="tac">20</td></tr>
+      <tr><td>HA gel 1%</td><td class="tac">—</td><td class="tac">20</td><td class="tac">—</td></tr>
+      <tr><td>Rosehip / Argan</td><td class="tac">—</td><td class="tac">50/40</td><td class="tac">—</td></tr>
+      <tr><td>Dầu dừa</td><td class="tac">50</td><td class="tac">—</td><td class="tac">55</td></tr>
+      <tr><td>Dầu hạnh nhân</td><td class="tac">40</td><td class="tac">—</td><td class="tac">—</td></tr>
+      <tr><td>Allantoin</td><td class="tac">5</td><td class="tac">—</td><td class="tac">5</td></tr>
+      <tr><td>Nước cất</td><td class="tac">52</td><td class="tac">5</td><td class="tac">—</td></tr>
+      <tr><td>Tinh dầu</td><td class="tac">5</td><td class="tac">5</td><td class="tac">5</td></tr>
+      <tr class="key"><td>Vitamin E</td><td class="tac">3</td><td class="tac">5</td><td class="tac">3</td></tr>
+      <tr class="key"><td>Chất bảo quản</td><td class="tac">10</td><td class="tac">10</td><td class="tac">12</td></tr>
+      <tr><td><b>Tổng · pH 5.0–5.5</b></td><td class="tac"><b>1000</b></td><td class="tac"><b>1000</b></td><td class="tac"><b>1000</b></td></tr>
+    </table>
+    <div class="avoid">⚠ KB03: ngâm bột mủ trôm trong nước 2–4h thành gel TRƯỚC khi trộn.</div>
+  </div>
+</section>
+
+<!-- ==================== QUY TRÌNH NƯỚC HOA ==================== -->
+<section class="section" id="proc-nh">
+  <h1>📋 QUY TRÌNH PHA NƯỚC HOA</h1>
+  <div class="sub">Mẻ 20 chai 30ml · Ví dụ mùi N01 · Đọc tới đâu làm tới đó</div>
+
+  <div class="proc" data-key="parfum">
+    <div class="procbar">
+      <b>TIẾN ĐỘ</b><div class="bar"><i class="pfill"></i></div><span class="pcount">0/10 bước</span>
+      <button class="mini mini-print" onclick="window.print()">🖨 In</button>
+      <button class="mini mini-reset pReset">↺</button>
+    </div>
+
+    <div class="card">
+      <h2>ℹ️ THÔNG TIN MẺ</h2>
+      <div class="info">
+        <div><b>Thời gian</b>≈ 2 giờ + 2–4 tuần ủ</div>
+        <div><b>Thành phẩm</b>20 chai × 30ml</div>
+        <div><b>Tổng dịch</b>600 ml (100 dầu + 500 cồn)</div>
+        <div><b>Bảo quản</b>Tối mát &lt;25°C · HSD 24 tháng</div>
+      </div>
+      <div class="critbox">🔴 LUẬT VÀNG: KHÔNG thêm nước. Dầu chỉ tan trong cồn — thêm nước là đục, hỏng mẻ.</div>
+    </div>
+
+    <div class="card">
+      <h2>🧰 BƯỚC 0 – CHUẨN BỊ (đong xong hết rồi mới pha)</h2>
+      <div class="lbl">① Dụng cụ</div>
+      <ul class="clean">
+        <li>Ống đong <b>50 &amp; 25 ml</b> · chai thủy tinh tối màu <b>100 ml</b> (đựng blend)</li>
+        <li>Bình pha <b>1 lít</b> · đũa thủy tinh · phễu + <b>giấy lọc cà phê ×5</b></li>
+        <li><b>20 chai 30 ml</b> + vòi xịt · đèn pin · găng · khẩu trang · kính · khăn không xơ · cồn 70°</li>
+      </ul>
+      <div class="lbl">② Đong sẵn tinh dầu — đổ theo thứ tự (mùi N01)</div>
+      <table>
+        <tr><th class="tac">TT</th><th>Tên</th><th class="tac">Đong</th></tr>
+        <tr><td class="tac">1</td><td>Xạ hương TH</td><td class="tac"><span class="num">8 ml</span></td></tr>
+        <tr><td class="tac">2</td><td>Vani</td><td class="tac"><span class="num">10 ml</span></td></tr>
+        <tr><td class="tac">3</td><td>Phấn thơm</td><td class="tac"><span class="num">12 ml</span></td></tr>
+        <tr><td class="tac">4</td><td>Hoa nhài TH</td><td class="tac"><span class="num">10 ml</span></td></tr>
+        <tr><td class="tac">5</td><td>Hoa hồng TH</td><td class="tac"><span class="num">48 ml</span></td></tr>
+        <tr><td class="tac">6</td><td>Bergamot</td><td class="tac"><span class="num">12 ml</span></td></tr>
+        <tr><td class="tac">—</td><td><b>Tổng dầu</b></td><td class="tac"><span class="num">100 ml</span></td></tr>
+      </table>
+      <div class="cue">🔁 Mùi khác: mở “Thẻ nước hoa”, đổ theo số &amp; thứ tự trên thẻ đó.</div>
+      <div class="lbl">③ Đong sẵn cồn</div>
+      <table><tr><th>Tên</th><th class="tac">Đong</th></tr><tr><td>Cồn 96°</td><td class="tac"><span class="num">500 ml</span></td></tr></table>
+    </div>
+
+    <div class="step"><div class="step-h"><div class="badge">1</div><div class="step-t">BẢO HỘ &amp; KHU VỰC</div><div class="step-time">~5 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Bàn phẳng sạch, xa lửa</span><span class="num">3 m</span></li>
+          <li><span>Lau bàn + xịt cồn 70°, để khô</span><span class="num">3 phút</span></li>
+          <li><span>Mở cửa/quạt · đeo khẩu trang+kính+găng</span><span class="num">—</span></li>
+        </ul>
+        <div class="avoid">⚠ Không lửa, không hút thuốc — cồn 96° rất dễ cháy.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c1"><label for="c1">✔ Xong Bước 1</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">2</div><div class="step-t">TIỆT TRÙNG DỤNG CỤ</div><div class="step-time">~20 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Luộc ống đong/chai/bình/đũa/phễu</span><span class="num">10 phút</span></li>
+          <li><span>Lau khô trong+ngoài (khăn không xơ)</span><span class="num">—</span></li>
+          <li><span>Xịt cồn 70°, dốc ráo, để khô</span><span class="num">5 phút</span></li>
+        </ul>
+        <div class="critbox">🔴 Còn 1 giọt nước → nước hoa ĐỤC → bỏ mẻ. Khô 100% mới dùng.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c2"><label for="c2">✔ Dụng cụ khô 100%</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">3</div><div class="step-t">PHA CHAI DẦU BLEND (nặng→nhẹ)</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <div class="cue">Mỗi loại 1 ống đong. RÓT tinh dầu RA ống đong — không nhúng vào chai gốc.</div>
+        <ul class="do-list">
+          <li><span>① Xạ hương TH</span><span class="num numbig">8 ml</span></li>
+          <li><span>② Vani</span><span class="num numbig">10 ml</span></li>
+          <li><span>③ Phấn thơm</span><span class="num numbig">12 ml</span></li>
+          <li><span>④ Hoa nhài TH</span><span class="num numbig">10 ml</span></li>
+          <li><span>⑤ Hoa hồng TH</span><span class="num numbig">48 ml</span></li>
+          <li><span>⑥ Bergamot</span><span class="num numbig">12 ml</span></li>
+          <li><span>Đậy nắp, lắc tròn</span><span class="num">60 giây</span></li>
+        </ul>
+        <div class="cue">✔ Blend ~100 ml, màu đồng nhất, không tách lớp.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c3"><label for="c3">✔ Xong Bước 3</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">4</div><div class="step-t">TRỘN DẦU VÀO CỒN</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Rót cồn 96° vào bình</span><span class="num numbig">500 ml</span></li>
+          <li><span>Đổ TỪ TỪ dầu blend VÀO cồn</span><span class="num numbig">100 ml</span></li>
+          <li><span>Khuấy 1 chiều · đậy nắp ngay</span><span class="num">5 phút</span></li>
+        </ul>
+        <div class="critbox">🔴 TUYỆT ĐỐI KHÔNG thêm nước.</div>
+        <div class="cue">✔ Dung dịch trong/hơi vàng, không lợn cợn.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c4"><label for="c4">✔ Xong Bước 4</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">5</div><div class="step-t">Ủ MÙI (quan trọng nhất)</div><div class="step-time">2–4 TUẦN</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Quấn băng keo nắp · ghi ngày mở</span><span class="num">+14 ngày</span></li>
+          <li><span>Cất nơi tối mát</span><span class="num">&lt;25°C</span></li>
+          <li><span>Mỗi ngày lắc nhẹ</span><span class="num">10 lần</span></li>
+          <li><span>Ngày 14 ngửi: quyện, hết xốc cồn = đạt</span><span class="num">≥14 ngày</span></li>
+        </ul>
+        <div class="critbox">🔴 Ủ dưới 14 ngày → mùi gắt cồn, chưa đạt. KHÔNG rút ngắn.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c5"><label for="c5">✔ Đã ủ đủ &amp; mùi đạt</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">6</div><div class="step-t">LỌC LẠNH CHO TRONG</div><div class="step-time">6 giờ + 20 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Cho bình vào ngăn mát tủ lạnh</span><span class="num">4–6 giờ</span></li>
+          <li><span>Lọc NGAY khi còn lạnh qua giấy lọc</span><span class="num">—</span></li>
+          <li><span>Còn đục → thay giấy, lọc lần 2</span><span class="num">lần 2</span></li>
+        </ul>
+        <div class="cue">✔ Soi đèn pin — trong veo, không cặn.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c6"><label for="c6">✔ Đã lọc trong veo</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">7</div><div class="step-t">KIỂM TRA (5 tiêu chí)</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>① Màu đều · ② Mùi quyện · ③ Không cặn</span><span class="num">✓</span></li>
+          <li><span>④ Thử da mu tay, chờ</span><span class="num">10 phút</span></li>
+          <li><span>⑤ Sau 30 phút còn bám mùi</span><span class="num">30 phút</span></li>
+        </ul>
+        <div class="critbox">🔴 Da đỏ/ngứa → DỪNG CẢ MẺ, báo phụ trách. (Bán lô mới: theo dõi 48h.)</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c7"><label for="c7">✔ Đạt 5/5</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">8</div><div class="step-t">RÓT CHAI</div><div class="step-time">~20 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Phễu rót đúng mỗi chai</span><span class="num numbig">30 ml</span></li>
+          <li><span>Lắp vòi xịt siết chặt · xịt thử vòi</span><span class="num">—</span></li>
+        </ul>
+        <div class="cue">✔ Không rò rỉ, vòi xịt đều.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c8"><label for="c8">✔ Đã rót &amp; lắp vòi</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">9</div><div class="step-t">DÁN NHÃN &amp; ĐÓNG HỘP</div><div class="step-time">~30 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Để chai nghỉ ổn định</span><span class="num">30 phút</span></li>
+          <li><span>Chai NGUỘI mới dán nhãn (không bọt khí)</span><span class="num">—</span></li>
+          <li><span>Nhãn: Tên·30ml·Thành phần·NSX·HSD</span><span class="num">24 tháng</span></li>
+        </ul>
+        <div class="avoid">⚠ Mùi chanh/bergamot: ghi “Tránh nắng sau khi xịt lên da”.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c9"><label for="c9">✔ Đã dán nhãn &amp; đóng hộp</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">10</div><div class="step-t">VỆ SINH &amp; GHI SỔ</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Rửa dụng cụ (cồn rồi nước), phơi khô</span><span class="num">—</span></li>
+          <li><span>Đậy kín chai tinh dầu gốc</span><span class="num">—</span></li>
+          <li><span>Ghi phiếu mẻ: số lô, ngày, người làm, đạt/lỗi</span><span class="num">—</span></li>
+        </ul>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="c10"><label for="c10">✔ Đã vệ sinh &amp; ghi sổ</label></div></div>
+
+    <div class="card">
+      <h2>🛠 XỬ LÝ SỰ CỐ</h2>
+      <table>
+        <tr><th>Hiện tượng</th><th>Cách xử lý</th></tr>
+        <tr><td>Nước hoa bị đục</td><td>Do có nước/dụng cụ ẩm. Lọc lạnh lại; mẻ sau dụng cụ khô tuyệt đối, không thêm nước.</td></tr>
+        <tr><td>Còn cặn sau lọc</td><td>Để lạnh thêm 2 giờ, thay giấy, lọc lần 2.</td></tr>
+        <tr><td>Mùi còn gắt cồn</td><td>Chưa ủ đủ. Ủ tiếp 21–28 ngày.</td></tr>
+        <tr><td>Mùi bay nhanh</td><td>Thiếu tầng cuối (gỗ/xạ/hổ phách). Kiểm số tầng đáy theo thẻ.</td></tr>
+        <tr><td>Vòi xịt nghẹt</td><td>Tháo vòi ngâm cồn ấm, thông lại.</td></tr>
+        <tr><td>Da đỏ/ngứa khi thử</td><td>Dừng mẻ. Mùi citrus dùng FCF; kiểm nồng độ dầu.</td></tr>
+      </table>
+      <div class="critbox">🔴 3 ĐIỀU KHÔNG QUÊN: ① Không thêm nước · ② Dụng cụ khô 100% · ③ Ủ đủ ≥14 ngày.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== QUY TRÌNH KEM ==================== -->
+<section class="section" id="proc-kem">
+  <h1>📋 QUY TRÌNH PHA KEM</h1>
+  <div class="sub">Mẻ 1000g · Ví dụ kem K01 · Có chốt chặn nhiệt độ &amp; đo pH</div>
+
+  <div class="proc" data-key="kem">
+    <div class="procbar">
+      <b>TIẾN ĐỘ</b><div class="bar"><i class="pfill"></i></div><span class="pcount">0/10 bước</span>
+      <button class="mini mini-print" onclick="window.print()">🖨 In</button>
+      <button class="mini mini-reset pReset">↺</button>
+    </div>
+
+    <div class="card">
+      <h2>ℹ️ THÔNG TIN MẺ</h2>
+      <div class="info">
+        <div><b>Thời gian</b>≈ 1.5 giờ</div>
+        <div><b>Thành phẩm</b>1000 g (≈ 5–10 hũ)</div>
+        <div><b>Bảo quản</b>Mát · HSD 6 tháng (mở dùng 3 tháng)</div>
+        <div><b>pH mục tiêu</b>5.0 – 5.5</div>
+      </div>
+      <div class="critbox">🔴 LUẬT VÀNG: Chỉ cho arbutin / Vit C / chất bảo quản khi kem đã NGUỘI &lt; 40°C. Nóng hơn → arbutin hỏng, bảo quản mất tác dụng.</div>
+    </div>
+
+    <div class="card">
+      <h2>🧰 BƯỚC 0 – CHUẨN BỊ &amp; CÂN SẴN</h2>
+      <div class="warnbox">⚠ Cân XONG HẾT rồi mới pha. Chất nhạy nhiệt (arbutin, Vit C) &amp; chất bảo quản để RIÊNG, cho ở pha nguội.</div>
+      <div class="lbl">① Dụng cụ</div>
+      <ul class="clean">
+        <li>Cân điện tử <b>0.1 g</b> · tô lớn + chén nhỏ dán tên · nồi + <b>nhiệt kế</b></li>
+        <li>Spatula silicone · <b>giấy đo pH</b> · dd acid citric 10% + TEA loãng (chỉnh pH)</li>
+        <li>Hũ <b>pump/airless</b> · găng · khẩu trang · khăn sạch · cồn 70°</li>
+      </ul>
+      <div class="lbl">② Cân sẵn (kem K01)</div>
+      <table>
+        <tr><th>Tên</th><th class="tac">Cân đúng</th><th>Ghi chú</th></tr>
+        <tr><td>Kem nền</td><td class="tac"><span class="num">720 g</span></td><td>—</td></tr>
+        <tr><td>Niacinamide</td><td class="tac"><span class="num">50 g</span></td><td>pha nước</td></tr>
+        <tr><td>Allantoin</td><td class="tac"><span class="num">5 g</span></td><td>pha nước</td></tr>
+        <tr><td>Nước cất</td><td class="tac"><span class="num">37 g</span></td><td>pha nước</td></tr>
+        <tr><td>Rosehip</td><td class="tac"><span class="num">50 g</span></td><td>pha trộn</td></tr>
+        <tr><td>HA gel 1%</td><td class="tac"><span class="num">100 g</span></td><td>pha trộn</td></tr>
+        <tr><td><b>Alpha-Arbutin</b> (để riêng)</td><td class="tac"><span class="num">20 g</span></td><td><b>pha nguội</b></td></tr>
+        <tr><td>Tinh dầu</td><td class="tac"><span class="num">5 g</span></td><td>pha nguội</td></tr>
+        <tr><td><b>Vitamin E</b></td><td class="tac"><span class="num">3 g</span></td><td>pha nguội</td></tr>
+        <tr><td><b>Chất bảo quản</b> (cho cuối)</td><td class="tac"><span class="num">10 g</span></td><td><b>pha nguội</b></td></tr>
+        <tr><td><b>TỔNG</b></td><td class="tac"><span class="num">1000 g</span></td><td>—</td></tr>
+      </table>
+      <div class="cue">🔁 Công thức khác: mở “Thẻ kem”, cân theo bảng công thức đó.</div>
+    </div>
+
+    <div class="step"><div class="step-h"><div class="badge">1</div><div class="step-t">BẢO HỘ &amp; KHU VỰC</div><div class="step-time">~5 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Bàn sạch, ít bụi · xịt cồn 70°, khô</span><span class="num">3 phút</span></li>
+          <li><span>Rửa tay + khẩu trang + găng</span><span class="num">—</span></li>
+        </ul>
+        <div class="avoid">⚠ Bụi &amp; tay bẩn = vi khuẩn vào kem.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k1"><label for="k1">✔ Xong Bước 1</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">2</div><div class="step-t">TIỆT TRÙNG DỤNG CỤ</div><div class="step-time">~20 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Luộc tô/chén/đũa/hũ</span><span class="num">10 phút</span></li>
+          <li><span>Lau khô · xịt cồn 70° · để khô</span><span class="num">5 phút</span></li>
+          <li><span>Nhiệt kế lau cồn 70°, để khô</span><span class="num">—</span></li>
+        </ul>
+        <div class="critbox">🔴 Dụng cụ bẩn/ẩm → kem nhiễm khuẩn, mốc sau vài ngày.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k2"><label for="k2">✔ Dụng cụ sạch, khô</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">3</div><div class="step-t">PHA NƯỚC – hòa bột 40°C</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Đun 37g nước cất tới</span><span class="num numbig">40°C</span></li>
+          <li><span>Đổ Niacinamide, khuấy tan hết</span><span class="num">50 g</span></li>
+          <li><span>Đổ Allantoin, khuấy tan</span><span class="num">5 g</span></li>
+        </ul>
+        <div class="avoid">⚠ Không quá 45°C · Arbutin &amp; Vit C CHƯA cho (để pha nguội).</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k3"><label for="k3">✔ Bột tan hết</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">4</div><div class="step-t">PHA TRỘN – nền + dầu + nước</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Tô nền + Rosehip 50 + HA 100, khuấy 1 chiều</span><span class="num">3 phút</span></li>
+          <li><span>Đổ nước-bột (ấm) vào, khuấy 1 chiều</span><span class="num">5–7 phút</span></li>
+        </ul>
+        <div class="critbox">🔴 Chỉ khuấy MỘT chiều. Đổi chiều → tách nước.</div>
+        <div class="cue">✔ Kem mịn, đồng nhất, không tách lớp.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k4"><label for="k4">✔ Kem mịn đều</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">5</div><div class="step-t">KIỂM TRA NHIỆT ĐỘ (chốt chặn)</div><div class="step-time">đo nhiệt</div></div>
+      <div class="step-b">
+        <div class="critbox">🔴 ĐO NHIỆT KẾ. Chỉ qua Bước 6 khi kem DƯỚI 40°C.</div>
+        <div class="avoid">⚠ Còn ấm → nghỉ thêm 5–10 phút rồi đo lại. Đừng vội cho actives.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k5"><label for="k5">✔ Đã xác nhận kem dưới 40°C</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">6</div><div class="step-t">PHA NGUỘI – actives + bảo quản</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Đổ Alpha-Arbutin, khuấy tan</span><span class="num">20 g</span></li>
+          <li><span>Đổ Tinh dầu</span><span class="num">5 g</span></li>
+          <li><span>Đổ Vitamin E</span><span class="num">3 g</span></li>
+          <li><span>Đổ Chất bảo quản SAU CÙNG, khuấy</span><span class="num numbig">10 g</span></li>
+        </ul>
+        <div class="critbox">🔴 Cho khi &gt;40°C → arbutin phân hủy, bảo quản mất tác dụng.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k6"><label for="k6">✔ Đã cho actives + bảo quản</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">7</div><div class="step-t">ĐO &amp; CHỈNH pH</div><div class="step-time">~10 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Chấm giấy đo pH · mục tiêu</span><span class="num numbig">5.0–5.5</span></li>
+          <li><span>pH &gt;5.5 → nhỏ acid citric 10%, đo lại</span><span class="num">—</span></li>
+          <li><span>pH &lt;5.0 → nhỏ TEA loãng, đo lại</span><span class="num">—</span></li>
+        </ul>
+        <div class="cue">✔ pH nằm 5.0–5.5 = đạt.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k7"><label for="k7">✔ pH đạt 5.0–5.5</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">8</div><div class="step-t">KIỂM TRA CHẤT LƯỢNG</div><div class="step-time">~10 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Mịn không tách · trắng ngà · thơm nhẹ không chua</span><span class="num">✓</span></li>
+          <li><span>Thử da mu tay, chờ</span><span class="num">10 phút</span></li>
+        </ul>
+        <div class="critbox">🔴 Da đỏ/ngứa → DỪNG MẺ. (Bán lô mới: theo dõi 48h.)</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k8"><label for="k8">✔ Đạt QC</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">9</div><div class="step-t">ĐÓNG HŨ &amp; NHÃN</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Xúc vào hũ pump/airless, không bọt khí</span><span class="num">—</span></li>
+          <li><span>Đậy chặt · nguội mới dán nhãn</span><span class="num">—</span></li>
+          <li><span>Nhãn: Thành phần đủ·KL·NSX·HSD</span><span class="num">6 tháng</span></li>
+        </ul>
+        <div class="cue">✔ Ghi “mở nắp dùng trong 3 tháng · thử da trước dùng”.</div>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k9"><label for="k9">✔ Đã đóng hũ &amp; dán nhãn</label></div></div>
+
+    <div class="step"><div class="step-h"><div class="badge">10</div><div class="step-t">VỆ SINH &amp; GHI SỔ</div><div class="step-time">~15 phút</div></div>
+      <div class="step-b">
+        <ul class="do-list">
+          <li><span>Rửa dụng cụ, phơi khô</span><span class="num">—</span></li>
+          <li><span>Ghi phiếu mẻ (nhớ ghi pH đo được)</span><span class="num">—</span></li>
+        </ul>
+      </div>
+      <div class="check"><input type="checkbox" class="chk" id="k10"><label for="k10">✔ Đã vệ sinh &amp; ghi sổ</label></div></div>
+
+    <div class="card">
+      <h2>🛠 XỬ LÝ SỰ CỐ</h2>
+      <table>
+        <tr><th>Hiện tượng</th><th>Cách xử lý</th></tr>
+        <tr><td>Kem mốc sau vài ngày</td><td>Thiếu/loãng bảo quản hoặc dụng cụ bẩn. Đủ 0.8–1% bảo quản, tiệt trùng kỹ, hũ kín.</td></tr>
+        <tr><td>Kem tách nước</td><td>Khuấy đổi chiều hoặc cho nước-bột khi quá nóng/lạnh. Khuấy 1 chiều; đổ khi ~40°C.</td></tr>
+        <tr><td>Kem lổn nhổn / có hạt</td><td>Bột chưa tan. Hòa tan hết ở pha nước; arbutin khuấy kỹ.</td></tr>
+        <tr><td>Da nhờn rít / châm chích</td><td>pH sai. Đo &amp; chỉnh về 5.0–5.5.</td></tr>
+        <tr><td>Kem đổi màu / mùi ôi</td><td>Dầu oxy hóa. Thêm đủ Vitamin E; dùng dầu mới, bảo quản mát.</td></tr>
+        <tr><td>Mủ trôm vón (KB03)</td><td>Chưa ngâm nở. Ngâm bột trong nước 2–4h thành gel trước khi trộn.</td></tr>
+      </table>
+      <div class="critbox">🔴 3 ĐIỀU KHÔNG QUÊN: ① Chỉ cho actives/bảo quản khi &lt;40°C · ② Khuấy 1 chiều · ③ Đo &amp; chỉnh pH 5.0–5.5.</div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="footer">
+  INDOCHINE PARFUM · Sổ tay sản xuất tổng hợp · Thẻ + Quy trình.<br>
+  Tiến độ mỗi quy trình lưu tự động trong máy. Bấm 🖨 để in trang đang xem.
+</div>
+
+<script>
+(function(){
+  var navs = Array.prototype.slice.call(document.querySelectorAll('.navbtn'));
+  function show(id){
+    Array.prototype.slice.call(document.querySelectorAll('.section')).forEach(function(s){
+      s.style.display = (s.id===id ? 'block' : 'none');
+    });
+    navs.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-target')===id); });
+    try{ window.scrollTo(0,0); }catch(e){}
+  }
+  navs.forEach(function(b){ b.addEventListener('click', function(){ show(b.getAttribute('data-target')); }); });
+
+  Array.prototype.slice.call(document.querySelectorAll('.proc')).forEach(function(proc){
+    var key = 'indochine_'+proc.getAttribute('data-key')+'_progress';
+    var checks = Array.prototype.slice.call(proc.querySelectorAll('.chk'));
+    var total = checks.length;
+    var fill = proc.querySelector('.pfill');
+    var cnt = proc.querySelector('.pcount');
+    var resetBtn = proc.querySelector('.pReset');
+    function save(){ try{ var st={}; checks.forEach(function(c){st[c.id]=c.checked;}); localStorage.setItem(key, JSON.stringify(st)); }catch(e){} }
+    function load(){ try{ var raw=localStorage.getItem(key); if(!raw) return; var st=JSON.parse(raw); checks.forEach(function(c){ if(st[c.id]) c.checked=true; }); }catch(e){} }
+    function refresh(){
+      var done = checks.filter(function(c){return c.checked;}).length;
+      if(fill) fill.style.width = (total?(done/total*100):0)+'%';
+      if(cnt) cnt.textContent = done+'/'+total+' bước';
+      checks.forEach(function(c){ var st=c.closest('.step'); if(st){ st.classList.toggle('done', c.checked); } });
+    }
+    checks.forEach(function(c){ c.addEventListener('change', function(){ save(); refresh(); }); });
+    if(resetBtn){ resetBtn.addEventListener('click', function(){ if(!confirm('Bỏ hết dấu tick của quy trình này?')) return; checks.forEach(function(c){c.checked=false;}); save(); refresh(); }); }
+    load(); refresh();
+  });
+
+  show('home');
+})();
+</script>
+</body>
+</html>
