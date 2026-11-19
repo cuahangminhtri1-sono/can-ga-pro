@@ -526,13 +526,17 @@ function docSo(n){
 }
 function tienChu(n){var s=docSo(n);return s.charAt(0).toUpperCase()+s.slice(1)+' đồng'}
 function fmtDate(ts){var d=new Date(ts),p=function(x){return x<10?'0'+x:''+x};return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
-function flockAge(st){if(!st.flock||!st.flock.hatch)return NaN;var a=new Date(st.flock.hatch);a.setHours(0,0,0,0);var b=new Date(st.createdAt);b.setHours(0,0,0,0);return Math.floor((b-a)/864e5)}
+/* [CG9] NGÀY GIỜ CỦA PHIẾU = lúc cân MÃ ĐẦU TIÊN (giờ bắt đầu cân) — KHÔNG lấy createdAt: đó là lúc mở phiếu trống, thường là lúc bấm “Xoá hết”
+   của đợt trước nên lệch ngày giờ khi đối chiếu. Mỗi mã cân đã ghi giờ cân (at) từ bản đầu tiên ⇒ phiếu cũ trong Sổ cũng hiện lại đúng giờ.
+   Sửa số / đổi loại một mã không đổi giờ của mã đó. Phiếu chưa có mã nào thì lấy giờ hiện tại. */
+function tCan(st){var t=0,es=(st&&st.entries)||[];es.forEach(function(e){var a=+e.at||0;if(a>0&&(!t||a<t))t=a});return t||(es.length&&st.createdAt?st.createdAt:Date.now())}
+function flockAge(st){if(!st.flock||!st.flock.hatch)return NaN;var a=new Date(st.flock.hatch);a.setHours(0,0,0,0);var b=new Date(tCan(st));b.setHours(0,0,0,0);return Math.floor((b-a)/864e5)}
 function flockLine(st){if(!st.flock||!st.flock.name)return'';var a=flockAge(st);return st.flock.name+(isFinite(a)&&a>=0?' · '+a+' ngày tuổi':'')}
 function billText(st,cfg,c){
   var L=[];
   L.push('PHIẾU CÂN GÀ'+(cfg.shop?' - '+cfg.shop:''));
   if(cfg.shopPhone)L.push('ĐT: '+cfg.shopPhone);
-  L.push('Ngày: '+fmtDate(st.createdAt));
+  L.push('Ngày: '+fmtDate(tCan(st)));
   if(st.customer.name)L.push('Khách: '+st.customer.name+(st.customer.phone?' - '+st.customer.phone:''));
   if(flockLine(st))L.push('Đàn: '+flockLine(st));
   c.groups.forEach(function(g){
@@ -745,14 +749,14 @@ function qrSvg(q,attrs){if(!q)return'';var b=4,n=q.size+2*b,p='';
 /* tài khoản nhận tiền (cài đặt) → dòng chữ + mã QR trên phiếu */
 function bankOK(cf){return /^\d{6}$/.test(cf.bankBin||'')&&/^[0-9A-Za-z]{4,19}$/.test(cf.bankAcc||'')}
 function bankLine(cf){return bankOK(cf)?(bankName(cf.bankBin)||'Ngân hàng mã '+cf.bankBin)+' · STK '+cf.bankAcc+(cf.bankHolder?' · '+cf.bankHolder:''):(cf.bank||'')}
-function ckNote(st,cf){var base=ckClean(cf.ckNote==null?'BAN GA TU NUOI':cf.ckNote,20),d=new Date(st.createdAt||Date.now()),p=function(x){return x<10?'0'+x:''+x};return ckClean((base?base+' ':'')+p(d.getDate())+p(d.getMonth()+1),25)}
+function ckNote(st,cf){var base=ckClean(cf.ckNote==null?'BAN GA TU NUOI':cf.ckNote,20),d=new Date(tCan(st)),p=function(x){return x<10?'0'+x:''+x};return ckClean((base?base+' ':'')+p(d.getDate())+p(d.getMonth()+1),25)}
 function qrAmt(c){return c.due<=0?0:(c.paid>0&&c.remain>0?c.remain:c.due)}
 function qrInfo(st,c,cf){if(!bankOK(cf))return null;var amt=qrAmt(c);if(amt<=0)return null;var note=ckNote(st,cf);
   return{amt:amt,note:note,part:c.paid>0&&c.remain>0,payload:vietQR(cf.bankBin,cf.bankAcc,amt,note,cf.bankSvc)}}
 /* ===CORE-END=== */
 
 /* ---------- môi trường ---------- */
-var CG_VER='2026-11-19-CG8';
+var CG_VER='2026-11-19-CG9';
 /* nhận biết đang nằm trong app quy trình bằng chính thẻ khung chứa — không phụ thuộc trang chính đã chạy xong script hay chưa */
 var EMBED=false;try{EMBED=window.parent!==window&&!!window.frameElement&&window.frameElement.id==='canGaFrame'}catch(e){EMBED=false}
 var SA=!!window.CANGA_STANDALONE||EMBED, mem={}, RAW={}, FAIL={};
@@ -1303,7 +1307,7 @@ function renderDebt(){var el=$('#debtChip');if(!el)return;var d=lastDebt();
 function billHTML(st,c){
   var h='<div class="bill" id="bill">';
   if(cfg.shop)h+='<div class="bh">'+esc(cfg.shop)+(cfg.shopPhone?'<small>ĐT: '+esc(cfg.shopPhone)+'</small>':'')+'</div>';
-  h+='<h3>PHIẾU CÂN GÀ</h3><div class="meta"><span>Ngày: '+fmtDate(st.createdAt)+'</span>'+(st.customer.name?'<span>Khách: <b>'+esc(st.customer.name)+'</b>'+(st.customer.phone?' · '+esc(st.customer.phone):'')+'</span>':'')+(flockLine(st)?'<span>Đàn: '+esc(flockLine(st))+'</span>':'')+'</div>';
+  h+='<h3>PHIẾU CÂN GÀ</h3><div class="meta"><span>Ngày: '+fmtDate(tCan(st))+'</span>'+(st.customer.name?'<span>Khách: <b>'+esc(st.customer.name)+'</b>'+(st.customer.phone?' · '+esc(st.customer.phone):'')+'</span>':'')+(flockLine(st)?'<span>Đàn: '+esc(flockLine(st))+'</span>':'')+'</div>';
   c.groups.forEach(function(g){
     if(!g.nMa&&!g.nBi)return;
     h+='<div class="gt"><span>'+esc(g.name)+'</span><span class="num">'+fmtD(g.price)+'/kg</span></div>';
@@ -1562,7 +1566,7 @@ function openShare(st){
     try{
       var cv=shareCanvas(st,compute(st,cfg)),url=cv.toDataURL('image/png');
       if(!url||url.length<200)throw new Error('empty');
-      SH.url=url;SH.name='phieu-can-ga-'+stamp(st.createdAt)+'.png';
+      SH.url=url;SH.name='phieu-can-ga-'+stamp(tCan(st))+'.png';
       try{SH.file=new File([dataBlob(url)],SH.name,{type:'image/png'})}catch(e){SH.file=null}
       var im=document.createElement('img');im.id='shImg';im.alt='Ảnh phiếu cân gà';im.src=url;$('#shBox').innerHTML='';$('#shBox').appendChild(im);
       var a=$('#shSave');if(a){a.href=url;a.setAttribute('download',SH.name)}
@@ -1759,7 +1763,7 @@ function prBluetooth(st,force){
 function renderSo(){
   syncHist();
   var now=new Date(),d0=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime(),w0=d0-6*864e5,m0=new Date(now.getFullYear(),now.getMonth(),1).getTime();
-  function agg(from){var a={n:0,kg:0,goods:0};hist.forEach(function(h){if(h.state.createdAt>=from){a.n++;a.kg+=h.sum.kg;a.goods+=h.sum.goods}});return a}
+  function agg(from){var a={n:0,kg:0,goods:0};hist.forEach(function(h){if(tCan(h.state)>=from){a.n++;a.kg+=h.sum.kg;a.goods+=h.sum.goods}});return a}
   var a=agg(d0),b=agg(w0),m=agg(m0),debt=0,seen={};
   for(var i=hist.length-1;i>=0;i--){var n=(hist[i].state.customer.name||'').trim().toLowerCase()||('#'+hist[i].id);if(seen[n])continue;seen[n]=1;if(hist[i].sum.remain>0)debt+=hist[i].sum.remain}
   function st(t,x){return'<div><span>'+t+'</span><b>'+fmtD(x.goods)+'</b><small>'+x.n+' phiếu · '+fmtKg(x.kg)+' kg</small></div>'}
@@ -1772,7 +1776,7 @@ function renderHist(q){
   q=(q||'').trim().toLowerCase();var h='';
   for(var i=hist.length-1;i>=0;i--){var r=hist[i],s=r.state;
     if(q&&((s.customer.name||'')+' '+(s.customer.phone||'')).toLowerCase().indexOf(q)<0)continue;
-    h+='<button class="hrow" data-hid="'+esc(r.id)+'"><b>'+esc(s.customer.name||'Khách lẻ')+'</b><span class="m">'+fmtD(r.sum.goods)+'</span><small>'+fmtDate(s.createdAt)+' · '+fmtKg(r.sum.kg)+' kg'+(r.sum.con?' · '+fmtInt(r.sum.con)+' con':'')+'</small><small class="'+(r.sum.remain>0?'no':'')+'">'+(r.sum.remain>0?'nợ '+fmtD(r.sum.remain):'đã đủ')+'</small></button>'}
+    h+='<button class="hrow" data-hid="'+esc(r.id)+'"><b>'+esc(s.customer.name||'Khách lẻ')+'</b><span class="m">'+fmtD(r.sum.goods)+'</span><small>'+fmtDate(tCan(s))+' · '+fmtKg(r.sum.kg)+' kg'+(r.sum.con?' · '+fmtInt(r.sum.con)+' con':'')+'</small><small class="'+(r.sum.remain>0?'no':'')+'">'+(r.sum.remain>0?'nợ '+fmtD(r.sum.remain):'đã đủ')+'</small></button>'}
   $('#hlist').innerHTML=h||'<div class="empty">'+(hist.length?'Không tìm thấy phiếu nào.':'Chưa có phiếu nào. Cân xong vào thẻ Phiếu bấm “Lưu phiếu vào sổ”.')+'</div>';
 }
 function openHist(id){
@@ -2171,7 +2175,7 @@ function renderCai(){
    '<div class="card"><h2>Hướng dẫn sử dụng</h2>'+
    '<details open><summary>Cân nhanh trong 3 bước</summary><ul><li>Ở thẻ <b>Cân</b>: bấm số kg, bấm <b>CỘNG MÃ</b>. Lặp lại cho từng lồng.</li><li>Sang thẻ <b>Tính tiền</b>: nhập giá. Gõ 62 máy tự hiểu là 62.000đ.</li><li>Sang thẻ <b>Phiếu</b>: lưu vào sổ, <b>chia sẻ ảnh phiếu</b> qua Zalo, hoặc <b>in phiếu</b>.</li></ul><p>Bàn phím số nhận ngay lúc ngón tay chạm xuống, bấm nhanh hai ngón liền nhau vẫn đủ số.</p></details>'+
    '<details><summary>Tài khoản · dùng thử · gia hạn · hỗ trợ</summary><p>Lần đầu mở app: bấm <b>Tạo tài khoản</b>, gõ email và mật khẩu (từ 6 ký tự). Tài khoản mới được <b>dùng thử miễn phí</b>, đủ mọi tính năng. Đã có tài khoản Sổ Nợ của cùng chủ phần mềm thì bấm <b>Đăng nhập</b> bằng đúng email và mật khẩu đó.</p><ul><li><b>Xem hạn dùng</b>: thẻ <b>Cài đặt</b> → khung <b>Tài khoản Cân Gà Pro</b> ở trên cùng. Sắp hết hạn thì app nhắc mỗi ngày 1 lần.</li><li><b>Gia hạn</b>: bấm <b>💳 Gia hạn</b> → chọn số tháng (gói 12 tháng có quà tặng khi chủ phần mềm đang khuyến mãi) → mở app ngân hàng quét mã QR (số tiền và nội dung đã điền sẵn, <b>giữ nguyên nội dung</b>) → bấm <b>✅ Tôi đã chuyển khoản</b>. Chủ phần mềm duyệt xong là app <b>tự mở</b>, không cần bấm gì thêm. Gia hạn sớm thì hạn mới cộng nối tiếp.</li><li><b>Hết hạn</b>: app hiện màn gia hạn; dữ liệu phiếu cân trên máy vẫn còn nguyên, gia hạn xong dùng tiếp.</li><li><b>Cần hỗ trợ, hoặc đã chuyển khoản mà app chưa mở</b>: bấm <b>💬 Nhắn chủ phần mềm</b> (trả lời hiện ngay trong app) hoặc gọi số hotline.</li><li><b>Đổi mật khẩu</b>: bấm <b>🔑 Đổi mật khẩu</b>. Quên mật khẩu: ở màn đăng nhập bấm <b>Quên mật khẩu</b>, app gửi thư đặt lại vào email (xem cả mục Spam).</li><li><b>Dữ liệu phiếu cân nằm trên máy này</b>, không nằm trong tài khoản. Đổi máy: ở máy cũ vào <b>Sao lưu dữ liệu</b> → <b>Tải file sao lưu</b> (hoặc Sao chép), sang máy mới đăng nhập rồi <b>Khôi phục</b>.</li><li>Mất mạng vẫn cân bình thường. App chỉ cần có mạng ít nhất 7 ngày một lần để kiểm tra hạn dùng.</li></ul></details>'+
-   '<details><summary>Xoá hết để cân đợt mới</summary><p>Ở thẻ <b>Cân</b>, bấm nút đỏ <b>🗑 Xoá hết</b> ở đầu sổ cân. App hỏi lại trước khi xoá; phiếu chưa lưu thì chọn <b>Lưu vào Sổ rồi xoá</b> hoặc <b>Xoá, không lưu</b>.</p><p>Xoá hết là xoá <b>phiếu đang cân</b>: mọi mã cân, bì đã cân, tên khách, tiền cọc / tiền trả / nợ cũ. App <b>giữ lại</b> giá bán, cách trừ bì và toàn bộ phiếu đã lưu trong thẻ Sổ.</p><p>Lỡ tay xoá phiếu chưa lưu: bấm <b>↩ Lấy lại phiếu vừa xoá</b> hiện ngay trên màn hình cân (còn trong 24 giờ, cho tới lần xoá hết kế tiếp).</p></details>'+
+   '<details><summary>Xoá hết để cân đợt mới</summary><p>Ở thẻ <b>Cân</b>, bấm nút đỏ <b>🗑 Xoá hết</b> ở đầu sổ cân. App hỏi lại trước khi xoá; phiếu chưa lưu thì chọn <b>Lưu vào Sổ rồi xoá</b> hoặc <b>Xoá, không lưu</b>.</p><p>Xoá hết là xoá <b>phiếu đang cân</b>: mọi mã cân, bì đã cân, tên khách, tiền cọc / tiền trả / nợ cũ. App <b>giữ lại</b> giá bán, cách trừ bì và toàn bộ phiếu đã lưu trong thẻ Sổ.</p><p>Ngày giờ ghi trên phiếu (và trong thẻ Sổ) là lúc cân <b>mã đầu tiên</b> của phiếu — tức giờ bắt đầu cân, không phải lúc bấm Xoá hết.</p><p>Lỡ tay xoá phiếu chưa lưu: bấm <b>↩ Lấy lại phiếu vừa xoá</b> hiện ngay trên màn hình cân (còn trong 24 giờ, cho tới lần xoá hết kế tiếp).</p></details>'+
    '<details><summary>Chia sẻ ảnh phiếu</summary><p>Ở thẻ <b>Phiếu</b> bấm <b>📷 Chia sẻ ảnh phiếu</b>: app tạo một tấm ảnh giống phiếu đang xem, có đủ sổ cân chia cột. Bấm <b>Chia sẻ ảnh</b> rồi chọn Zalo, hoặc bấm <b>Lưu ảnh</b> để lưu vào máy. Máy nào không cho chia sẻ thì chạm giữ vào ảnh để lưu.</p><p>Phiếu cũ trong thẻ <b>Sổ</b> cũng chia sẻ ảnh được. Nút <b>Sao chép gửi Zalo</b> vẫn còn nếu muốn gửi dạng chữ.</p></details>'+
    '<details><summary>In phiếu: A4/A5, máy in nhiệt, Bluetooth</summary><p>Ở thẻ <b>Phiếu</b> bấm <b>🖨 In phiếu</b> rồi chọn 1 trong 3 cách, giống phần in của app Sổ Nợ:</p><ul><li><b>Máy tính — Phiếu A4/A5</b>: in máy in thường hoặc lưu thành PDF. Chọn khổ A4 hay A5 ngay bên dưới nút.</li><li><b>In nhiệt qua trình duyệt (58/80mm)</b>: máy in nhiệt cắm USB / WiFi, AirPrint; chạy cả trên iPhone.</li><li><b>In máy in Bluetooth (nhiệt)</b>: máy in nhiệt cầm tay. Bấm <b>Kết nối / đổi máy in Bluetooth</b>, chọn tên máy in, chọn khổ 58mm hay 80mm rồi bấm in. Cần Chrome trên Android hoặc máy tính.</li></ul><p>Khổ giấy được nhớ cho lần sau. Phiếu cũ trong thẻ Sổ cũng in được.</p></details>'+
    '<details><summary>Lấy tên, số điện thoại từ danh bạ</summary><p>Ở thẻ <b>Tính tiền</b> bấm <b>📇 Lấy tên, số điện thoại khách từ danh bạ</b>. Ở thẻ <b>Cài đặt</b> bấm <b>📇 Lấy tên, số điện thoại từ danh bạ</b> để điền thông tin của mình. Danh bạ mở ra: <b>chạm vào tên người</b> (hiện dấu ✓) rồi bấm <b>Xong</b> ở góc trên bên phải — bấm nút quay lại là huỷ. Trên cùng danh bạ, để nút <b>Tên</b> và <b>Số điện thoại</b> sáng. App điền sẵn tên và số, ô vừa điền sáng lên; người có nhiều số thì app hỏi lấy số nào. Số dạng +84 được đổi về 0…</p><ul><li><b>Cách nhanh nhất — Chia sẻ từ Danh bạ</b> (Android, app đã cài ra màn hình chính bằng Chrome): mở app <b>Danh bạ</b> của máy → chạm vào người → <b>Chia sẻ</b> → chọn biểu tượng app này (<b>Cân Gà Pro</b>; đang dùng trong app quy trình thì chọn <b>Gà Nòi QT</b> / <b>Gà Nòi QTC</b>). Máy hỏi chia sẻ kiểu nào thì chọn <b>Tệp vCard</b> hoặc <b>Văn bản</b> đều được. App tự mở, vào thẻ <b>Tính tiền</b> và điền tên, số khách (người có nhiều số thì app hỏi lấy số nào; chia sẻ nhiều người thì app hỏi chọn người). Cách này không cần nút 📇, không bị lỗi danh bạ của Chrome. <b>Không thấy app trong danh sách Chia sẻ</b>: app cài từ bản cũ chưa có mục này — gỡ biểu tượng app khỏi màn hình chính rồi mở lại bằng Chrome → ⋮ → <b>Thêm vào Màn hình chính</b> → <b>Cài đặt</b> (hoặc cứ dùng, Chrome tự cập nhật app sau 1–2 ngày).</li><li><b>Chọn người xong mà app không nhận được gì</b>: đây là lỗi của <b>Chrome bản mới trên điện thoại đời mới</b> — Chrome mở app Danh bạ của máy đè lên rồi tự huỷ, không gửi người bạn chọn về app. Trang web nào cũng bị, app không sửa được, phải chờ Google sửa Chrome. App tự nhận ra lỗi này và mở bảng <b>Lấy tên, số từ danh bạ bằng cách sao chép</b> (lần sau bấm 📇 là vào thẳng bảng này):<ol><li>Mở app <b>Danh bạ</b> của máy → chạm vào người cần lấy.</li><li>Lấy <b>cả tên + số</b>: bấm <b>Chia sẻ</b> → <b>Văn bản</b> → <b>Sao chép</b>. Chỉ lấy <b>số</b>: <b>chạm giữ vào số điện thoại</b> → <b>Sao chép</b>.</li><li>Quay lại app: app <b>tự điền</b> tên, số, ô vừa điền sáng lên. Lần đầu máy hỏi cho xem nội dung đã sao chép → bấm <b>Cho phép</b>. Không tự điền thì chạm vào ô trong bảng → <b>Dán</b>: dán xong là điền luôn.</li></ol>Đã sao chép sẵn rồi thì bấm nút <b>📋 Dán tên, số đã sao chép từ danh bạ</b> ngay dưới nút 📇. Nội dung sao chép chỉ có số thì gõ tên ở ô Tên. Chrome lên bản mới thì app tự thử lại danh bạ 1 lần; muốn thử ngay thì bấm <b>📇 Thử lại danh bạ của Chrome</b> trong bảng sao chép.</li><li><b>Android</b>: phải mở app bằng <b>Chrome</b>. Trình duyệt <b>Samsung Internet</b>, Cốc Cốc, trình duyệt bên trong Zalo / Facebook không có chức năng này: bấm nút danh bạ, app hiện nút <b>🌐 Mở app này bằng Chrome</b>. Ngay dưới nút danh bạ, app cũng ghi rõ trình duyệt đang dùng có lấy được hay không.</li><li>Lần đầu máy hỏi “Cho phép Chrome truy cập danh bạ?” → bấm <b>Cho phép</b>. Lỡ bấm Từ chối: Cài đặt → Ứng dụng → Chrome → Quyền → Danh bạ → Cho phép.</li><li><b>iPhone</b>: chạm vào ô tên hoặc số → <b>Tự động điền</b> → <b>Liên hệ</b> → chọn người (iOS 17 trở lên). Hoặc bật 1 lần: <b>Cài đặt → Safari → Nâng cao → Tính năng thử nghiệm</b> (máy đời mới: Cài đặt → Ứng dụng → Safari → Nâng cao → <b>Feature Flags</b>) → bật <b>Contact Picker API</b>. Tên mục có thể khác chút tuỳ đời iPhone.</li></ul><p>Chưa lấy được thì cứ gõ tay như cũ.</p></details>'+
@@ -2413,7 +2417,7 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimesta
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 window.__cgpChay = true;
-const APP = "canga", TEN = "Cân Gà Pro", APP_VER = "2026-11-19-CGP3";
+const APP = "canga", TEN = "Cân Gà Pro", APP_VER = "2026-11-19-CGP4";
 const FB = { apiKey:"AIzaSyA_kjQ-CdASRkf50Glz3kQajlkD5qGWC4k", authDomain:"so-no-cc57a.firebaseapp.com",
   projectId:"so-no-cc57a", storageBucket:"so-no-cc57a.firebasestorage.app",
   messagingSenderId:"571694791559", appId:"1:571694791559:web:8e409728a520e2d370b122" };
@@ -3213,7 +3217,7 @@ setInterval(() => { if(!document.hidden && G.u){ danhGia(); if(Date.now() - (G.l
 <script type="module">
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-const APP_ID = "canga", APP_VERSION = "2026-11-19-CGP3";   /* = APP_VER của cổng tài khoản (số bản app Quản Trị đọc) */
+const APP_ID = "canga", APP_VERSION = "2026-11-19-CGP4";   /* = APP_VER của cổng tài khoản (số bản app Quản Trị đọc) */
 const FB = { apiKey:"AIzaSyA_kjQ-CdASRkf50Glz3kQajlkD5qGWC4k", authDomain:"so-no-cc57a.firebaseapp.com",
   projectId:"so-no-cc57a", storageBucket:"so-no-cc57a.firebasestorage.app",
   messagingSenderId:"571694791559", appId:"1:571694791559:web:8e409728a520e2d370b122" };
