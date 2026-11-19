@@ -746,7 +746,7 @@ function qrInfo(st,c,cf){if(!bankOK(cf))return null;var amt=qrAmt(c);if(amt<=0)r
 /* ===CORE-END=== */
 
 /* ---------- môi trường ---------- */
-var CG_VER='2026-11-14-CG6';
+var CG_VER='2026-11-19-CG7';
 /* nhận biết đang nằm trong app quy trình bằng chính thẻ khung chứa — không phụ thuộc trang chính đã chạy xong script hay chưa */
 var EMBED=false;try{EMBED=window.parent!==window&&!!window.frameElement&&window.frameElement.id==='canGaFrame'}catch(e){EMBED=false}
 var SA=!!window.CANGA_STANDALONE||EMBED, mem={}, RAW={}, FAIL={};
@@ -1778,7 +1778,7 @@ function openHist(id){
 }
 
 /* ---------- lấy tên + số điện thoại từ DANH BẠ điện thoại ---------- */
-var CT={cb:null,name:'',tels:[]};
+var CT={cb:null,name:'',tels:[],mode:'',base:undefined,left:false,tk:0,busy:false,lai:0};
 /* các cách mở danh bạ, cách đầu tốt nhất. Danh bạ chỉ mở được từ trang chính, không mở từ khung con:
    khi Cân Gà nằm trong app quy trình thì nhờ trang chính mở giùm (hàm tạo ngay trong trang chính), rồi mới tới cách khác */
 function ctSels(){
@@ -1788,40 +1788,42 @@ function ctSels(){
   return L;
 }
 function ctSel(){var L=ctSels();return L.length?L[0]:null}
-/* Chrome trên Android mới có thể tự huỷ lúc chọn danh bạ: danh bạ của máy mở lên che app, Chrome thấy trang bị ẩn nên trả về “chưa chọn ai”,
-   người dùng có chọn xong cũng không gửi về được. Cách chắc ăn không dính chuyện đó: sao chép số trong app Danh bạ rồi DÁN vào app. */
+/* [CG7] LỖI CỦA CHROME, không phải của app: Chrome bản mới trên điện thoại đời mới mở app Danh bạ của máy đè lên Chrome để chọn người; trang bị che nên
+   Chrome tự huỷ phiên chọn và trả về “chưa chọn ai” ngay (Chromium “[Contacts] Dismiss picker when spawning tab is hidden” + bộ chọn danh bạ hệ thống của
+   Android 17). Người dùng chọn xong cũng không gửi về được — trang web nào cũng bị (Sổ Nợ cũng vậy), app không sửa được. Gặp 1 lần thì app NHỚ theo đúng
+   bản Chrome đang dùng (khoá mt_ct_loi_v1, dùng chung với Sổ Nợ): lần sau bấm 📇 là vào thẳng cách SAO CHÉP — sao chép tên, số trong app Danh bạ của máy
+   rồi quay lại là app tự điền. Chrome lên bản mới thì app thử lại danh bạ 1 lần (có thể Google đã sửa). */
 var CTV={hid:false,ms:0,got:'',pv:''};   /* hid: trang từng bị che lúc đang chọn danh bạ · ms: sau bao lâu có kết quả · got: kiểu kết quả · pv: bản Android */
 function ctHid(){try{if(document.hidden||document.visibilityState==='hidden')return true}catch(e){}try{var d=topWin().document;if(d.hidden||d.visibilityState==='hidden')return true}catch(e){}return false}
 document.addEventListener('visibilitychange',function(){if(ctHid())CTV.hid=true});
 (function(){try{var u=topWin().navigator.userAgentData;if(u&&u.getHighEntropyValues)u.getHighEntropyValues(['platformVersion']).then(function(v){CTV.pv=String((v&&v.platformVersion)||'')},function(){})}catch(e){}})();
-function ctDiag(err){var s='Máy: '+osName()+(CTV.pv?' '+CTV.pv:'')+' · Trình duyệt: '+brName()+' · Lấy danh bạ: '+(ctSel()?'có':'không có');
+var CTK='mt_ct_loi_v1',CTM=null;   /* lỗi danh bạ của Chrome đã gặp trên máy này: {v: bản Chrome, pv: bản Android, n: số lần, at, why} */
+function ctCv(){var m=/Chrome\/(\d+)/.exec(navigator.userAgent||'');return m?+m[1]:0}
+function ctLoi(){var o=CTM;try{var r=localStorage.getItem(CTK);if(r)o=JSON.parse(r)}catch(e){}return o&&typeof o==='object'&&o.v===ctCv()?o:null}
+function ctLoiGhi(why){var o=ctLoi();o={v:ctCv(),pv:CTV.pv,n:((o&&o.n)||0)+1,at:Date.now(),why:why};CTM=o;try{localStorage.setItem(CTK,JSON.stringify(o))}catch(e){}}
+function ctLoiXoa(){CTM=null;try{localStorage.removeItem(CTK)}catch(e){}}
+function ctDiag(err){var l=ctLoi(),s='Máy: '+osName()+(CTV.pv?' '+CTV.pv:'')+' · Trình duyệt: '+brName()+' · Lấy danh bạ: '+(ctSel()?'có':'không có');
   if(CTV.got)s+=' · Kết quả: '+CTV.got+(CTV.ms?' sau '+CTV.ms+' ms':'')+' · Trang bị che lúc chọn: '+(CTV.hid?'có':'không');
+  s+=' · Lỗi danh bạ của Chrome: '+(l?'đã gặp '+l.n+' lần':'chưa gặp');
   if(err)s+=' · Lỗi: '+(err.name||'?')+(err.message?' – '+String(err.message).slice(0,140):'');return s}
-/* ngay dưới nút danh bạ: nút DÁN số đã sao chép (k = pastec | pasteme) + dòng chỉ cách */
-function ctHintHTML(k){return'<button class="btn sm ct" data-act="'+k+'">📋 Dán số đã sao chép từ danh bạ</button>'+(ctSel()?'<div class="hint">Mở danh bạ → chạm vào tên người → bấm <b>Xong</b> ở góc trên bên phải. Danh bạ không điền được vào app thì: mở app Danh bạ của máy → chạm giữ vào số điện thoại → <b>Sao chép</b> → quay lại bấm nút 📋.</div>':'<div class="hint warn">⚠ '+esc(brName())+' chưa cho lấy danh bạ — bấm nút 📇 để xem cách'+(osName()==='Android'&&!isChrome()?' mở bằng Chrome':'')+'. Hoặc sao chép số trong app Danh bạ của máy rồi bấm nút 📋.</div>')}
+/* ngay dưới nút danh bạ: nút DÁN tên, số đã sao chép (k = pastec | pasteme) + dòng chỉ cách */
+function ctHintHTML(k){
+  var b='<button class="btn sm ct" data-act="'+k+'">📋 Dán tên, số đã sao chép từ danh bạ</button>';
+  if(!ctSel())return b+'<div class="hint warn">⚠ '+esc(brName())+' chưa cho lấy danh bạ — bấm nút 📇 để xem cách'+(osName()==='Android'&&!isChrome()?' mở bằng Chrome':'')+'. Hoặc sao chép tên, số trong app Danh bạ của máy rồi bấm nút 📋.</div>';
+  if(ctLoi())return b+'<div class="hint warn">⚠ Chrome trên máy này đang lỗi danh bạ: chọn người xong, Chrome không gửi tên, số về app. Bấm nút 📇 để lấy bằng cách <b>sao chép</b> — sao chép xong quay lại là app tự điền.</div>';
+  return b+'<div class="hint">Mở danh bạ → chạm vào tên người → bấm <b>Xong</b> ở góc trên bên phải. Chọn xong mà app không điền: mở app Danh bạ của máy → <b>Chia sẻ → Văn bản → Sao chép</b> (hoặc chạm giữ số → Sao chép) → quay lại bấm nút 📋.</div>';
+}
 /* làm sáng ô vừa được điền từ danh bạ để người dùng thấy ngay */
 function ctFlash(ids){setTimeout(function(){ids.forEach(function(id){var el=$('#'+id);if(!el)return;el.style.boxShadow='0 0 0 3px var(--ok)';setTimeout(function(){el.style.boxShadow=''},1800)})},30)}
 function ctHelp(kind,err){
   var os=osName(),br=brName(),h,pri=kind==='err',
-      pbtn=function(c){return'<button class="btn'+(c?' pri':'')+'" data-m="ctpaste">📋 Dán số đã sao chép</button>'};
-  if(kind==='hidden'){                          /* trang bị che lúc đang chọn rồi Chrome báo “chưa chọn ai” */
-    return'<h3>Chrome không nhận được người bạn chọn</h3><p>Lúc danh bạ mở ra, app bị che đi và Chrome báo về là “chưa chọn ai” — nên tên, số bạn chọn không gửi vào app được. Thường <b>không phải do quyền danh bạ</b>: Chrome trên một số máy Android mới bị vậy, app không sửa được.</p>'+
-      '<p><b>Cách nhanh nhất (khoảng 30 giây):</b></p><ol><li>Mở app <b>Danh bạ</b> của máy → vào người cần lấy.</li><li><b>Chạm giữ vào số điện thoại</b> → chọn <b>Sao chép</b>.</li><li>Quay lại đây → bấm <b>📋 Dán số đã sao chép</b> ở dưới.</li></ol>'+
-      '<div class="btns">'+pbtn(1)+'<button class="btn" data-m="ctagain">📇 Thử lại danh bạ</button><button class="btn" data-m="close">Gõ tay</button></div><p class="hint diag">Thông tin máy: '+esc(ctDiag(err))+'</p>';
-  }
-  if(kind==='empty'){                           /* rỗng ngay mà không thấy trang bị che: có thể chưa cho phép, có thể Chrome tự đóng — đưa cách Dán lên đầu */
-    return'<h3>Danh bạ chưa gửi được ai về app</h3><p>Chrome báo “chưa chọn ai” ngay lúc vừa mở danh bạ.</p>'+
-      '<p><b>Cách chắc ăn ngay:</b> mở app <b>Danh bạ</b> của máy → <b>chạm giữ vào số điện thoại</b> → <b>Sao chép</b> → quay lại đây bấm <b>📋 Dán số đã sao chép</b>.</p>'+
-      '<div class="btns">'+pbtn(1)+'<button class="btn" data-m="close">Đã hiểu</button></div>'+
-      (os==='Android'?'<p class="hint">Muốn dùng nút danh bạ: vào <b>Cài đặt</b> của điện thoại → <b>Ứng dụng</b> → <b>'+esc(isChrome()?'Chrome':br.replace(/ \d+$/,''))+'</b> → <b>Quyền</b> → <b>Danh bạ</b> → <b>Cho phép</b>, rồi tắt hẳn app và mở lại. Quyền đã bật rồi mà vẫn vậy là do Chrome trên một số máy Android mới tự đóng danh bạ khi danh bạ của máy mở lên che app — app không sửa được.</p>':'<p class="hint">Bấm lại nút lấy danh bạ thử lần nữa. Vẫn không được thì tắt hẳn app rồi mở lại.</p>')+
-      '<p class="hint diag">Thông tin máy (chụp màn hình gửi người làm app nếu cần): '+esc(ctDiag(err))+'</p>';
-  }
+      pbtn=function(c){return'<button class="btn'+(c?' pri':'')+'" data-m="ctpaste">📋 Lấy bằng cách sao chép</button>'};
   if(kind==='cancel'||kind==='noprops'){
-    h='<h3>'+(kind==='cancel'?'Danh bạ đã đóng mà app chưa nhận được ai':'Danh bạ gửi về không có tên, không có số')+'</h3><p>Cách chọn đúng:</p><ol><li>Bấm <b>Mở lại danh bạ</b> ở dưới.</li><li><b>Chạm vào tên người</b> cần lấy (hiện dấu ✓).</li><li>Bấm nút <b>Xong</b> (hoặc dấu ✓) ở <b>góc trên bên phải</b>. Đừng bấm nút quay lại — quay lại là huỷ.</li></ol><p>Trên cùng danh bạ có các nút <b>Tên</b> và <b>Số điện thoại</b>: để chúng <b>sáng</b> (đang bật), tắt nút nào thì danh bạ không gửi phần đó.</p>';
+    h='<h3>'+(kind==='cancel'?'Danh bạ đã đóng mà app chưa nhận được ai':'Danh bạ gửi về không có tên, không có số')+'</h3><p>Cách chọn đúng:</p><ol><li>Bấm <b>Mở lại danh bạ</b> ở dưới.</li><li><b>Chạm vào tên người</b> cần lấy (hiện dấu ✓).</li><li>Bấm nút <b>Xong</b> (hoặc dấu ✓) ở <b>góc trên bên phải</b>. Đừng bấm nút quay lại — quay lại là huỷ.</li></ol><p>Trên cùng danh bạ có các nút <b>Tên</b> và <b>Số điện thoại</b>: để chúng <b>sáng</b> (đang bật), tắt nút nào thì danh bạ không gửi phần đó.</p><p>Chọn đúng mà vẫn không được: bấm <b>📋 Lấy bằng cách sao chép</b> — sao chép tên, số trong app Danh bạ của máy rồi quay lại, app tự điền.</p>';
     return h+'<div class="btns"><button class="btn pri" data-m="ctagain">📇 Mở lại danh bạ</button>'+pbtn(0)+'<button class="btn" data-m="close">Gõ tay</button></div><p class="hint diag">Thông tin máy: '+esc(ctDiag(err))+'</p>';
   }
   if(kind==='err'){
-    h='<h3>Danh bạ chưa mở ra được</h3>'+(os==='Android'?'<p>Thường do <b>'+esc(isChrome()?'Chrome':br)+'</b> chưa được phép đọc danh bạ của điện thoại:</p><ul><li>Vào <b>Cài đặt</b> của điện thoại → <b>Ứng dụng</b> → <b>'+esc(isChrome()?'Chrome':br.replace(/ \d+$/,''))+'</b> → <b>Quyền</b> → <b>Danh bạ</b> → chọn <b>Cho phép</b>.</li><li>Quay lại app, bấm lại nút lấy danh bạ. Máy hỏi “Cho phép truy cập danh bạ?” thì bấm <b>Cho phép</b>.</li><li>Vẫn không được: tắt hẳn app rồi mở lại.</li></ul><p>Quyền đã bật rồi mà vẫn vậy: Chrome trên một số máy Android mới tự đóng danh bạ khi danh bạ của máy mở lên che app — app không sửa được. Dùng nút <b>📋 Dán số đã sao chép</b> ở dưới (sao chép số trong app Danh bạ của máy rồi dán vào).</p>':'<p>Bấm lại nút lấy danh bạ thử lần nữa. Vẫn không được thì tắt hẳn app rồi mở lại, hoặc bấm <b>📋 Dán số đã sao chép</b> ở dưới.</p>');
+    h='<h3>Danh bạ chưa mở ra được</h3>'+(os==='Android'?'<p>Thường do <b>'+esc(isChrome()?'Chrome':br)+'</b> chưa được phép đọc danh bạ của điện thoại:</p><ul><li>Vào <b>Cài đặt</b> của điện thoại → <b>Ứng dụng</b> → <b>'+esc(isChrome()?'Chrome':br.replace(/ \d+$/,''))+'</b> → <b>Quyền</b> → <b>Danh bạ</b> → chọn <b>Cho phép</b>.</li><li>Quay lại app, bấm lại nút lấy danh bạ. Máy hỏi “Cho phép truy cập danh bạ?” thì bấm <b>Cho phép</b>.</li><li>Vẫn không được: tắt hẳn app rồi mở lại.</li></ul><p>Quyền đã bật rồi mà vẫn vậy: bấm <b>📋 Lấy bằng cách sao chép</b> ở dưới — sao chép tên, số trong app Danh bạ của máy rồi quay lại, app tự điền.</p>':'<p>Bấm lại nút lấy danh bạ thử lần nữa. Vẫn không được thì tắt hẳn app rồi mở lại, hoặc bấm <b>📋 Lấy bằng cách sao chép</b> ở dưới.</p>');
   }else{
     h='<h3>Trình duyệt này chưa cho lấy danh bạ</h3>';
     if(os==='Android')h+='<p>Bạn đang mở app bằng <b>'+esc(br)+'</b>. Trên Android, trang web chỉ lấy được tên, số từ danh bạ khi mở bằng <b>Chrome</b>.</p>'+chromeBtn()+
@@ -1832,17 +1834,22 @@ function ctHelp(kind,err){
   }
   return h+'<p class="hint">Chưa lấy được thì cứ gõ tay, phiếu vẫn lưu đủ.</p><p class="hint diag">Thông tin máy (chụp màn hình gửi người làm app nếu cần): '+esc(ctDiag(err))+'</p><div class="btns">'+pbtn(pri)+'<button class="btn'+(pri?'':' pri')+'" data-m="close">Đã hiểu</button></div>';
 }
-function pickContact(cb){
+/* force: bấm “Thử lại danh bạ của Chrome” / “Mở lại danh bạ” — luôn mở danh bạ, kể cả máy đã ghi nhận lỗi */
+function pickContact(cb,force){
   CT.cb=cb;
   var L=ctSels();if(!L.length){openModal(ctHelp('none'),'ct');return}
+  if(!force&&ctLoi()){ctPaste(cb,'loi');return}   /* [CG7] máy này đã gặp lỗi danh bạ của Chrome (đúng bản Chrome đang dùng): vào thẳng cách sao chép */
   var t0=Date.now(),e0=null;
   CTV.hid=ctHid();CTV.got='';CTV.ms=0;
-  /* rỗng / bị huỷ: nếu trang đã bị che lúc đang chọn thì là Chrome tự đóng (đợi một chút cho tin “trang bị che” kịp tới), không phải người dùng bấm huỷ */
+  /* rỗng / bị huỷ: trang bị che lúc đang chọn, hoặc trả rỗng ngay (dưới 1,5 giây) = Chrome tự huỷ ⇒ ghi nhận lỗi + mở cách sao chép.
+     Để một lúc rồi đóng mà trang không bị che = người dùng bấm quay lại / huỷ ⇒ chỉ cách chọn đúng. Đợi 350 ms cho tin “trang bị che” kịp tới. */
   function empty(why,quick){CTV.ms=Date.now()-t0;CTV.got=why;
-    setTimeout(function(){openModal(ctHelp(CTV.hid||ctHid()?'hidden':(quick&&CTV.ms<1500?'empty':'cancel')),'ct')},350)}
+    setTimeout(function(){var hid=CTV.hid||ctHid();
+      if(hid||(quick&&CTV.ms<1500)){ctLoiGhi(hid?'che':'nhanh');ctPaste(cb,'loi')}
+      else openModal(ctHelp('cancel'),'ct')},350)}
   function got(a){try{
-    if(!a||!a.length){empty('rỗng (chưa chọn ai)',true);return}   /* mở rồi đóng ngay = máy chưa cho đọc danh bạ / Chrome tự đóng; để một lúc rồi đóng = bấm quay lại / huỷ */
-    CTV.ms=Date.now()-t0;CTV.got='có người được chọn';
+    if(!a||!a.length){empty('rỗng (chưa chọn ai)',true);return}
+    CTV.ms=Date.now()-t0;CTV.got='có người được chọn';ctLoiXoa();   /* danh bạ của Chrome chạy được ⇒ bỏ ghi nhận lỗi */
     var c=a[0]||{},name=c.name&&c.name.length?String(c.name[0]).trim():'',tels=[];
     (c.tel||[]).forEach(function(x){x=cleanTel(x);if(x&&tels.indexOf(x)<0)tels.push(x)});
     if(!name&&!tels.length){openModal(ctHelp('noprops'),'ct');return}
@@ -1866,17 +1873,17 @@ function ctMulti(cb,name,tels){CT.cb=cb;CT.name=name;CT.tels=tels;
 function ctFillC(n,t){state.sample=false;if(n)state.customer.name=n;if(t)state.customer.phone=t;touch();renderTien();ctFlash(['c-name','c-phone']);toast('Đã lấy từ danh bạ: '+[n,t].filter(Boolean).join(' · '))}
 function ctFillMe(n,t){if(n)cfg.shop=n;if(t)cfg.shopPhone=t;saveCfg();renderCai();ctFlash(['s-shop','s-phone']);toast('Đã lấy từ danh bạ: '+[n,t].filter(Boolean).join(' · '))}
 
-/* ---------- DÁN: sao chép số trong app Danh bạ của máy rồi dán vào đây (không phụ thuộc việc Chrome mở danh bạ) ---------- */
-var CTLB='Điện thoại di động|Số điện thoại|Điện thoại|Di động|Mobile|Phone|Tel|SĐT|SDT|ĐT|Zalo|Liên hệ|LH';   /* chữ đứng sát trước số, bỏ khỏi tên */
+/* ---------- SAO CHÉP rồi quay lại: sao chép tên, số trong app Danh bạ của máy — app tự điền (không phụ thuộc việc Chrome mở danh bạ) ---------- */
+var CTLB='Điện thoại di động|Số điện thoại|Điện thoại|Di động|Nhà riêng|Cơ quan|Công ty|Mobile|Phone|Tel|Cell|Home|Work|Other|Main|Fax|SĐT|SDT|ĐT|Zalo|Liên hệ|LH';   /* chữ đứng sát trước số, bỏ khỏi tên */
 function ctRe(s){return s.replace(/[.*+?^${}()|[\]\\\/-]/g,'\\$&')}
 function ctQP(s){try{return decodeURIComponent(s.replace(/=([0-9A-Fa-f]{2})/g,'%$1'))}catch(e){return s}}
-/* tách tên + số từ nội dung dán: chỉ có số, “tên + số”, hoặc thẻ liên hệ vCard (.vcf) */
+/* tách tên + số từ nội dung dán: chỉ có số, “tên + số” (Danh bạ → Chia sẻ → Văn bản), hoặc thẻ liên hệ vCard (.vcf) */
 function ctParse(txt){
   var s=String(txt==null?'':txt),name='',tels=[],hit=[],m,rest;
   try{s=s.normalize('NFC')}catch(e){}
-  s=s.replace(/[\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff]/g,'').replace(/\r\n?/g,'\n').trim();
+  s=s.replace(/[​-‏‪-‮⁦-⁩﻿]/g,'').replace(/\r\n?/g,'\n').trim();
   function add(t){t=cleanTel(t);if(!/^(0\d{8,10}|\+\d{8,14})$/.test(t))return false;if(tels.indexOf(t)<0)tels.push(t);return true}
-  function tidy(x){x=x.replace(/\s+/g,' ').replace(/^[\s,;:|·\-–—()\[\]"'“”]+|[\s,;:|·\-–—()\[\]"'“”]+$/g,'').trim();return new RegExp('^(?:'+CTLB+'|Mobile|Home|Work|Cell|Main)$','i').test(x)?'':x}
+  function tidy(x){x=x.replace(/\s+/g,' ').replace(/^[\s,;:|·\-–—()\[\]"'“”]+|[\s,;:|·\-–—()\[\]"'“”]+$/g,'').replace(/^(?:Họ và tên|Họ tên|Tên|Full name|Name)\s*[:：]\s*/i,'').trim();return new RegExp('^(?:'+CTLB+'|Mobile|Home|Work|Cell|Main)$','i').test(x)?'':x}
   if(!s)return{name:'',tels:[]};
   if(/BEGIN:VCARD/i.test(s)){
     var phys=s.split('\n'),raw=[],fn='',nn='',i,j,l,v,k;
@@ -1913,38 +1920,95 @@ function ctPreview(){
   else if(r.name)ctMsg('Không thấy số điện thoại. Bấm Lấy sẽ chỉ điền tên: '+r.name,false);
   else ctMsg('Không thấy tên hay số điện thoại trong nội dung này.',false)
 }
-function ctPaste(cb,auto){
-  CT.cb=cb;
-  openModal('<h3>Dán số điện thoại đã sao chép</h3><ol><li>Mở app <b>Danh bạ</b> của máy → vào người cần lấy.</li><li><b>Chạm giữ vào số điện thoại</b> → chọn <b>Sao chép</b>.</li><li>Quay lại đây: bấm <b>📋 Dán từ bộ nhớ máy</b>, hoặc chạm vào ô dưới → <b>Dán</b>. Rồi bấm <b>Lấy</b>.</li></ol>'+
-    '<div class="f"><label for="ct-txt">Nội dung đã sao chép (chỉ số, hoặc cả tên + số)</label><textarea id="ct-txt" rows="3" placeholder="Ví dụ: Chú Ba 0901 234 567"></textarea></div><p class="hint warn" id="ct-msg" hidden></p>'+
-    '<div class="btns"><button class="btn" data-m="ctclip">📋 Dán từ bộ nhớ máy</button><button class="btn pri" data-m="ctgo">Lấy</button></div><div class="btns"><button class="btn" data-m="close">Huỷ</button></div>','ct');
-  if(auto)ctClip();
+/* bảng SAO CHÉP. mode 'loi' (vào từ nút 📇 khi Chrome lỗi danh bạ): ghi mốc bộ nhớ sao chép lúc mở, KHÔNG điền — người dùng sang app Danh bạ sao chép
+   rồi quay lại ⇒ bộ nhớ đổi ⇒ app tự điền. mode khác (bấm 📋, đã sao chép sẵn): đọc ngay, hiện “Tìm thấy …”, bấm Lấy; quay lại với nội dung mới ⇒ tự điền.
+   Dán vào ô ⇒ điền luôn. Không bao giờ tự điền nội dung CŨ trong bộ nhớ (chỉ tự điền khi bộ nhớ vừa đổi so với mốc, hoặc người dùng tự bấm dán). */
+function ctPaste(cb,mode){
+  CT.cb=cb;CT.mode=mode==='loi'?'loi':'dan';CT.base=undefined;CT.left=false;CT.busy=false;CT.lai=0;
+  var tk=++CT.tk,loi=CT.mode==='loi';
+  openModal('<h3>'+(loi?'Lấy tên, số từ danh bạ bằng cách sao chép':'Dán tên, số đã sao chép')+'</h3>'+
+    (loi?'<p class="hint warn" style="margin:0">⚠ Chrome trên điện thoại này đang lỗi: mở danh bạ, chọn người xong nhưng Chrome <b>không gửi tên, số về app</b>. Lỗi nằm ở Chrome bản mới (máy đời mới), trang web nào cũng bị, app không sửa được. Trong lúc chờ Google sửa: lấy bằng cách sao chép, app tự điền.</p>':'')+
+    '<ol style="margin:0;padding-left:22px"><li>Mở app <b>Danh bạ</b> của máy → chạm vào người cần lấy.</li><li>Lấy <b>cả tên + số</b>: bấm <b>Chia sẻ</b> → chọn <b>Văn bản</b> → bấm <b>Sao chép</b>.<br>Chỉ lấy <b>số</b>: <b>chạm giữ vào số điện thoại</b> → <b>Sao chép</b>.</li><li>Quay lại app này: app <b>tự điền</b> tên, số. Lần đầu máy hỏi cho xem nội dung đã sao chép → bấm <b>Cho phép</b>.</li></ol>'+
+    '<div class="f"><label for="ct-txt">App không tự điền thì chạm vào ô này → <b>Dán</b> (dán xong là điền luôn)</label><textarea id="ct-txt" rows="2" placeholder="Ví dụ: Chú Ba 0901 234 567"></textarea></div><p class="hint warn" id="ct-msg" hidden></p>'+
+    '<div class="btns"><button class="btn" data-m="ctclip">📋 Dán từ bộ nhớ máy</button><button class="btn pri" data-m="ctgo">Lấy</button></div>'+
+    '<div class="btns">'+(loi?'<button class="btn" data-m="ctagain">📇 Thử lại danh bạ của Chrome</button>':'')+'<button class="btn" data-m="close">Đóng</button></div>'+
+    (loi?'<p class="hint diag">Thông tin máy: '+esc(ctDiag())+'</p>':''),'ct');
+  if(!loi)ctDoc(tk,'mo');
+  else if(ctHid())CT.left=true;   /* mở lúc trang còn bị che (người dùng còn ở danh bạ của máy): lần quay lại đầu tiên mới ghi mốc */
+  else ctDoc(tk,'goc');
 }
-/* đọc bộ nhớ sao chép của máy (cần máy cho phép; không được thì người dùng tự chạm vào ô → Dán) */
-function ctClip(){
+/* đọc bộ nhớ sao chép: thử trang chính trước (khung con không được quyền đọc), rồi tới khung */
+function ctDocBN(){
   var L=[],W=topWin();
   function rd(w){return function(){return w.navigator.clipboard.readText()}}
   try{if(W!==window&&W.navigator.clipboard&&typeof W.navigator.clipboard.readText==='function')L.push(rd(W))}catch(e){}
   try{if(navigator.clipboard&&typeof navigator.clipboard.readText==='function')L.push(rd(window))}catch(e){}
-  if(!L.length){ctMsg('Trình duyệt này không cho app đọc bộ nhớ máy — chạm vào ô trên, chọn Dán, rồi bấm Lấy.');return}
-  (function go(i){
-    var p;try{p=L[i]()}catch(e){p=Promise.reject(e)}
-    Promise.resolve(p).then(function(t){
-      var ta=$('#ct-txt');if(!ta)return;
-      t=String(t==null?'':t);
-      if(!t.trim()){ctMsg('Bộ nhớ máy đang trống — sao chép số trong app Danh bạ trước rồi bấm lại nút này.');return}
-      ta.value=t;ctPreview()},
-    function(){if(i+1<L.length)return go(i+1);ctMsg('Máy chưa cho app đọc bộ nhớ — chạm vào ô trên, chọn Dán, rồi bấm Lấy.')});
-  })(0);
+  return new Promise(function(res,rej){
+    if(!L.length){rej({name:'NOAPI'});return}
+    (function go(i,e0){
+      if(i>=L.length){rej(e0||{name:'NOREAD'});return}
+      var p;try{p=L[i]()}catch(e){p=Promise.reject(e)}
+      Promise.resolve(p).then(function(t){res(String(t==null?'':t))},function(e){go(i+1,e0||e||{name:'NOREAD'})});
+    })(0,null);
+  });
 }
+/* why: 'mo' bấm 📋 mở bảng · 'goc' ghi mốc (không điền) · 'tay' bấm “Dán từ bộ nhớ máy” · 've' vừa quay lại app */
+function ctDoc(tk,why){
+  if(why==='ve'&&CT.busy)return;
+  CT.busy=true;
+  ctDocBN().then(function(t){CT.busy=false;if(tk===CT.tk&&$('#ct-txt'))ctCo(t,why)},function(e){
+    CT.busy=false;if(tk!==CT.tk||!$('#ct-txt'))return;
+    var noapi=e&&e.name==='NOAPI';
+    if(why==='ve'&&!noapi&&CT.lai<2){CT.lai++;setTimeout(function(){if(tk===CT.tk&&!ctHid())ctDoc(tk,'ve')},700);return}   /* vừa quay lại, trang chưa kịp nhận chạm: thử lại */
+    if(CT.base===undefined)CT.base=null;
+    if(why==='goc')return;
+    ctMsg((noapi?'Trình duyệt này không cho app đọc bộ nhớ sao chép':'Máy chưa cho app đọc bộ nhớ sao chép')+' — chạm vào ô trên → Dán (dán xong là điền luôn).');
+  });
+}
+function ctCo(t,why){
+  var ta=$('#ct-txt');
+  if(why==='goc'||(why==='ve'&&CT.base===undefined)){CT.base=t;if(why==='ve')ctMsg('Sang app Danh bạ sao chép tên, số rồi quay lại đây — app tự điền.',true);return}
+  if(why==='ve'&&typeof CT.base==='string'&&t===CT.base){ctMsg('Chưa thấy tên, số mới được sao chép. Sang app Danh bạ → Sao chép rồi quay lại đây.');return}
+  var moi=why==='ve'&&typeof CT.base==='string';   /* bộ nhớ vừa đổi so với mốc đã biết ⇒ đúng cái người dùng vừa sao chép */
+  CT.base=t;
+  if(!t.trim()){ctMsg(why==='mo'?'Bộ nhớ máy đang trống — sang app Danh bạ sao chép tên, số rồi quay lại đây (app tự điền).':'Bộ nhớ sao chép đang trống.');return}
+  ta.value=t;ctPreview();
+  var r=ctParse(t);
+  if((moi||why==='tay')&&r.tels.length)ctDung(r);
+}
+/* điền vào app (nhiều số thì hỏi lấy số nào) */
+function ctDung(r){var cb=CT.cb;CT.tk++;if(r.tels.length>1){ctMulti(cb,r.name,r.tels);return}closeModal();if(cb)cb(r.name,r.tels[0]||'')}
+function ctClip(){ctDoc(CT.tk,'tay')}
 /* bấm Lấy: điền vào app */
 function ctSubmit(){
   var ta=$('#ct-txt');if(!ta)return;
-  var r=ctParse(ta.value),cb=CT.cb;
+  var r=ctParse(ta.value);
   if(!r.name&&!r.tels.length){ctMsg(ta.value.trim()?'Không thấy tên hay số điện thoại trong nội dung này.':'Ô đang trống — bấm 📋 Dán từ bộ nhớ máy, hoặc chạm vào ô → Dán.');return}
-  if(r.tels.length>1){ctMulti(cb,r.name,r.tels);return}
-  closeModal();if(cb)cb(r.name,r.tels[0]||'')
+  ctDung(r);
 }
+/* trang vừa hiện lại / vừa được chạm tới: đang mở bảng sao chép mà người dùng đã rời app (sang Danh bạ) ⇒ đọc bộ nhớ sao chép */
+function ctVe(){
+  if(modalKind!=='ct'||!$('#ct-txt')||!isOpen())return;
+  if(ctHid()){CT.left=true;CT.lai=0;return}
+  if(!CT.left)return;
+  CT.left=false;var tk=CT.tk;
+  setTimeout(function(){if(tk===CT.tk&&!ctHid())ctDoc(tk,'ve')},250);
+}
+function ctGanVe(W){try{W.document.addEventListener('visibilitychange',ctVe);W.addEventListener('focus',ctVe);W.addEventListener('pageshow',ctVe)}catch(e){}}
+ctGanVe(window);try{if(topWin()!==window)ctGanVe(topWin())}catch(e){}
+/* dán vào ô (bấm giữ → Dán): thay hẳn nội dung ô bằng chữ vừa dán rồi điền luôn. Gợi ý bộ nhớ của bàn phím dán cả số một lần cũng điền luôn */
+document.addEventListener('paste',function(e){
+  var t=e.target;if(!t||t.id!=='ct-txt'||modalKind!=='ct')return;
+  var s='';try{s=(e.clipboardData||window.clipboardData).getData('text')}catch(x){s=''}
+  if(s){e.preventDefault();t.value=s}
+  setTimeout(function(){var ta=$('#ct-txt');if(!ta)return;ctPreview();var r=ctParse(ta.value);if(r.tels.length)ctDung(r)},0);
+},true);
+document.addEventListener('input',function(e){
+  var t=e.target;if(!t||t.id!=='ct-txt'||modalKind!=='ct')return;
+  var it=e.inputType||'',d=typeof e.data==='string'?e.data:'';
+  if(it==='insertFromPaste'||it==='insertFromDrop'||d.replace(/\D/g,'').length>=8)
+    setTimeout(function(){var ta=$('#ct-txt');if(!ta)return;var r=ctParse(ta.value);if(r.tels.length)ctDung(r)},0);
+},true);
 /* ---------- mã QR chuyển khoản: xem trước trong Cài đặt, phóng to, đọc từ ảnh mã QR của ngân hàng ---------- */
 function qrPrevHTML(){
   if(!bankOK(cfg))return'<div class="hint">'+(cfg.bank?'Đang ghi kiểu cũ: “'+esc(cfg.bank)+'” (chưa có mã QR). ':'')+'Chọn <b>ngân hàng</b> và gõ <b>số tài khoản</b> để phiếu có mã QR.</div>'+(cfg.bank?'<button class="btn sm" data-act="bankold">Xoá dòng tài khoản cũ</button>':'');
@@ -2012,7 +2076,7 @@ function renderCai(){
    '<details><summary>Xoá hết để cân đợt mới</summary><p>Ở thẻ <b>Cân</b>, bấm nút đỏ <b>🗑 Xoá hết</b> ở đầu sổ cân. App hỏi lại trước khi xoá; phiếu chưa lưu thì chọn <b>Lưu vào Sổ rồi xoá</b> hoặc <b>Xoá, không lưu</b>.</p><p>Xoá hết là xoá <b>phiếu đang cân</b>: mọi mã cân, bì đã cân, tên khách, tiền cọc / tiền trả / nợ cũ. App <b>giữ lại</b> giá bán, cách trừ bì và toàn bộ phiếu đã lưu trong thẻ Sổ.</p><p>Lỡ tay xoá phiếu chưa lưu: bấm <b>↩ Lấy lại phiếu vừa xoá</b> hiện ngay trên màn hình cân (còn trong 24 giờ, cho tới lần xoá hết kế tiếp).</p></details>'+
    '<details><summary>Chia sẻ ảnh phiếu</summary><p>Ở thẻ <b>Phiếu</b> bấm <b>📷 Chia sẻ ảnh phiếu</b>: app tạo một tấm ảnh giống phiếu đang xem, có đủ sổ cân chia cột. Bấm <b>Chia sẻ ảnh</b> rồi chọn Zalo, hoặc bấm <b>Lưu ảnh</b> để lưu vào máy. Máy nào không cho chia sẻ thì chạm giữ vào ảnh để lưu.</p><p>Phiếu cũ trong thẻ <b>Sổ</b> cũng chia sẻ ảnh được. Nút <b>Sao chép gửi Zalo</b> vẫn còn nếu muốn gửi dạng chữ.</p></details>'+
    '<details><summary>In phiếu: A4/A5, máy in nhiệt, Bluetooth</summary><p>Ở thẻ <b>Phiếu</b> bấm <b>🖨 In phiếu</b> rồi chọn 1 trong 3 cách, giống phần in của app Sổ Nợ:</p><ul><li><b>Máy tính — Phiếu A4/A5</b>: in máy in thường hoặc lưu thành PDF. Chọn khổ A4 hay A5 ngay bên dưới nút.</li><li><b>In nhiệt qua trình duyệt (58/80mm)</b>: máy in nhiệt cắm USB / WiFi, AirPrint; chạy cả trên iPhone.</li><li><b>In máy in Bluetooth (nhiệt)</b>: máy in nhiệt cầm tay. Bấm <b>Kết nối / đổi máy in Bluetooth</b>, chọn tên máy in, chọn khổ 58mm hay 80mm rồi bấm in. Cần Chrome trên Android hoặc máy tính.</li></ul><p>Khổ giấy được nhớ cho lần sau. Phiếu cũ trong thẻ Sổ cũng in được.</p></details>'+
-   '<details><summary>Lấy tên, số điện thoại từ danh bạ</summary><p>Ở thẻ <b>Tính tiền</b> bấm <b>📇 Lấy tên, số điện thoại khách từ danh bạ</b>. Ở thẻ <b>Cài đặt</b> bấm <b>📇 Lấy tên, số điện thoại từ danh bạ</b> để điền thông tin của mình. Danh bạ mở ra: <b>chạm vào tên người</b> (hiện dấu ✓) rồi bấm <b>Xong</b> ở góc trên bên phải — bấm nút quay lại là huỷ. Trên cùng danh bạ, để nút <b>Tên</b> và <b>Số điện thoại</b> sáng. App điền sẵn tên và số, ô vừa điền sáng lên; người có nhiều số thì app hỏi lấy số nào. Số dạng +84 được đổi về 0…</p><ul><li><b>Danh bạ mở ra rồi mà app vẫn không nhận được</b> (app báo “Chrome không nhận được người bạn chọn” hoặc “Danh bạ chưa gửi được ai về app”, dù quyền danh bạ đã bật): Chrome trên một số máy Android mới tự đóng danh bạ khi danh bạ của máy mở lên che app, app không sửa được. Dùng nút <b>📋 Dán số đã sao chép từ danh bạ</b> nằm ngay dưới nút danh bạ: mở app <b>Danh bạ</b> của máy → vào người cần lấy → <b>chạm giữ vào số điện thoại</b> → <b>Sao chép</b> → quay lại app, bấm nút 📋 → app đọc số vừa sao chép (máy hỏi cho phép thì bấm <b>Cho phép</b>; không đọc được thì chạm vào ô → <b>Dán</b>) → bấm <b>Lấy</b>. Dán cả “tên + số” hoặc cả thẻ liên hệ cũng được; người có nhiều số thì app hỏi lấy số nào. Nội dung dán chỉ có số thì gõ tên ở ô Tên.</li><li><b>Android</b>: phải mở app bằng <b>Chrome</b>. Trình duyệt <b>Samsung Internet</b>, Cốc Cốc, trình duyệt bên trong Zalo / Facebook không có chức năng này: bấm nút danh bạ, app hiện nút <b>🌐 Mở app này bằng Chrome</b>. Ngay dưới nút danh bạ, app cũng ghi rõ trình duyệt đang dùng có lấy được hay không.</li><li>Lần đầu máy hỏi “Cho phép Chrome truy cập danh bạ?” → bấm <b>Cho phép</b>. Lỡ bấm Từ chối: Cài đặt → Ứng dụng → Chrome → Quyền → Danh bạ → Cho phép.</li><li><b>iPhone</b>: chạm vào ô tên hoặc số → <b>Tự động điền</b> → <b>Liên hệ</b> → chọn người (iOS 17 trở lên). Hoặc bật 1 lần: <b>Cài đặt → Safari → Nâng cao → Tính năng thử nghiệm</b> (máy đời mới: Cài đặt → Ứng dụng → Safari → Nâng cao → <b>Feature Flags</b>) → bật <b>Contact Picker API</b>. Tên mục có thể khác chút tuỳ đời iPhone.</li></ul><p>Chưa lấy được thì cứ gõ tay như cũ.</p></details>'+
+   '<details><summary>Lấy tên, số điện thoại từ danh bạ</summary><p>Ở thẻ <b>Tính tiền</b> bấm <b>📇 Lấy tên, số điện thoại khách từ danh bạ</b>. Ở thẻ <b>Cài đặt</b> bấm <b>📇 Lấy tên, số điện thoại từ danh bạ</b> để điền thông tin của mình. Danh bạ mở ra: <b>chạm vào tên người</b> (hiện dấu ✓) rồi bấm <b>Xong</b> ở góc trên bên phải — bấm nút quay lại là huỷ. Trên cùng danh bạ, để nút <b>Tên</b> và <b>Số điện thoại</b> sáng. App điền sẵn tên và số, ô vừa điền sáng lên; người có nhiều số thì app hỏi lấy số nào. Số dạng +84 được đổi về 0…</p><ul><li><b>Chọn người xong mà app không nhận được gì</b>: đây là lỗi của <b>Chrome bản mới trên điện thoại đời mới</b> — Chrome mở app Danh bạ của máy đè lên rồi tự huỷ, không gửi người bạn chọn về app. Trang web nào cũng bị, app không sửa được, phải chờ Google sửa Chrome. App tự nhận ra lỗi này và mở bảng <b>Lấy tên, số từ danh bạ bằng cách sao chép</b> (lần sau bấm 📇 là vào thẳng bảng này):<ol><li>Mở app <b>Danh bạ</b> của máy → chạm vào người cần lấy.</li><li>Lấy <b>cả tên + số</b>: bấm <b>Chia sẻ</b> → <b>Văn bản</b> → <b>Sao chép</b>. Chỉ lấy <b>số</b>: <b>chạm giữ vào số điện thoại</b> → <b>Sao chép</b>.</li><li>Quay lại app: app <b>tự điền</b> tên, số, ô vừa điền sáng lên. Lần đầu máy hỏi cho xem nội dung đã sao chép → bấm <b>Cho phép</b>. Không tự điền thì chạm vào ô trong bảng → <b>Dán</b>: dán xong là điền luôn.</li></ol>Đã sao chép sẵn rồi thì bấm nút <b>📋 Dán tên, số đã sao chép từ danh bạ</b> ngay dưới nút 📇. Nội dung sao chép chỉ có số thì gõ tên ở ô Tên. Chrome lên bản mới thì app tự thử lại danh bạ 1 lần; muốn thử ngay thì bấm <b>📇 Thử lại danh bạ của Chrome</b> trong bảng sao chép.</li><li><b>Android</b>: phải mở app bằng <b>Chrome</b>. Trình duyệt <b>Samsung Internet</b>, Cốc Cốc, trình duyệt bên trong Zalo / Facebook không có chức năng này: bấm nút danh bạ, app hiện nút <b>🌐 Mở app này bằng Chrome</b>. Ngay dưới nút danh bạ, app cũng ghi rõ trình duyệt đang dùng có lấy được hay không.</li><li>Lần đầu máy hỏi “Cho phép Chrome truy cập danh bạ?” → bấm <b>Cho phép</b>. Lỡ bấm Từ chối: Cài đặt → Ứng dụng → Chrome → Quyền → Danh bạ → Cho phép.</li><li><b>iPhone</b>: chạm vào ô tên hoặc số → <b>Tự động điền</b> → <b>Liên hệ</b> → chọn người (iOS 17 trở lên). Hoặc bật 1 lần: <b>Cài đặt → Safari → Nâng cao → Tính năng thử nghiệm</b> (máy đời mới: Cài đặt → Ứng dụng → Safari → Nâng cao → <b>Feature Flags</b>) → bật <b>Contact Picker API</b>. Tên mục có thể khác chút tuỳ đời iPhone.</li></ul><p>Chưa lấy được thì cứ gõ tay như cũ.</p></details>'+
    '<details><summary>Mã QR chuyển khoản trên phiếu</summary><p>Cài 1 lần ở <b>Cài đặt → Tài khoản nhận tiền · mã QR</b>: chọn <b>Ngân hàng</b>, gõ <b>Số tài khoản</b> và tên chủ tài khoản. Nhanh hơn: bấm <b>📷 Lấy từ ảnh mã QR ngân hàng của mình</b> rồi chọn ảnh mã QR đã lưu từ app ngân hàng (chạy trên Android mở bằng Chrome).</p><p>Cài xong phải <b>quét thử</b> mã hiện ngay bên dưới bằng app ngân hàng (dùng điện thoại khác, hoặc chụp màn hình rồi trong app ngân hàng chọn quét từ ảnh): ra <b>đúng tên chủ tài khoản</b> thì mới dùng.</p><p>Từ đó mọi phiếu đều có mã QR: trên màn hình, ảnh chia sẻ, bản in A4/A5, in nhiệt, in Bluetooth. Lái mở app ngân hàng quét là ra sẵn số tài khoản, <b>số tiền</b> và <b>nội dung</b>. Số tiền trong mã là số <b>PHẢI THU</b>; khách đã trả một phần thì là số <b>CÒN NỢ</b>. Phiếu không còn phải thu thì không in mã.</p><p>Ở thẻ Phiếu <b>chạm vào mã QR</b> để phóng to cho lái quét. Mã được tạo ngay trên máy, không cần mạng, không gửi số tài khoản đi đâu.</p></details>'+
    '<details><summary>Nội dung chuyển khoản và thuế</summary><p>App tự ghi nội dung <b>BAN GA TU NUOI</b> + ngày cân (ví dụ <b>BAN GA TU NUOI 1311</b>). Muốn đổi thì sửa ô <b>Nội dung chuyển khoản</b> trong Cài đặt.</p><p><b>Nội dung chuyển khoản không quyết định có bị tính thuế hay không.</b> Cơ quan thuế xét bản chất của khoản tiền: chỉ tiền từ sản xuất, kinh doanh mới tính; tiền cho, tặng, vay mượn thì không. Ghi sai sự thật (ví dụ ghi “cho mượn”, “trả nợ” cho tiền bán gà) không né được thuế, cơ quan thuế còn coi đó là dấu hiệu gian lận; người chuyển cũng có thể dựa vào chữ “cho mượn” để đòi lại tiền.</p><p><b>Gà tự nuôi bán ra</b> (gà sống, chưa chế biến) thuộc diện <b>miễn thuế thu nhập cá nhân</b> và <b>không chịu thuế GTGT</b>, với điều kiện: chính mình trực tiếp nuôi, có đất / chuồng trại hợp pháp, và cư trú ở địa phương nơi nuôi. Vì vậy ghi đúng <b>BAN GA TU NUOI</b> và lưu phiếu cân trong thẻ <b>Sổ</b> chính là giấy tờ có lợi cho mình.</p><p><b>Mua gà về bán lại</b> là kinh doanh: hộ kinh doanh có doanh thu cả năm từ 1 tỷ đồng trở xuống không phải nộp thuế; trên mức đó phải kê khai. Nội dung chuyển khoản không thay đổi được điều này.</p><p class="hint">Theo Luật Thuế thu nhập cá nhân 2025, Nghị định 141/2026/NĐ-CP và Công văn 4568/TCT-DNNCN của Tổng cục Thuế. Trường hợp cụ thể nên hỏi thêm cơ quan thuế nơi mình ở.</p></details>'+
    '<details><summary>Đọc to số kg</summary><p>Bật <b>Đọc to số kg</b> ở mục Cách cân, chọn <b>Tốc độ đọc</b>, rồi bấm <b>🔊 Thử đọc</b>. Dòng chữ ngay bên dưới cho biết máy đang đọc bằng giọng nào, hoặc vì sao máy không đọc được.</p><p>App mượn giọng đọc có sẵn của điện thoại, nên <b>máy chưa có giọng tiếng Việt thì không đọc được</b>; khi đó app kêu “bíp” thay cho đọc. Cách cài giọng:</p><ul><li><b>Máy Android</b>: mở Cài đặt của điện thoại, gõ tìm “chuyển văn bản” → mở mục <b>Chuyển văn bản sang lời nói</b> (có máy ghi “thành giọng nói”) → chọn công cụ của <b>Google</b> → bấm hình bánh răng → <b>Cài đặt dữ liệu thoại</b> → chọn <b>Tiếng Việt</b> để tải về.</li><li><b>iPhone</b>: Cài đặt → Trợ năng → Nội dung được đọc → Giọng nói → Tiếng Việt.</li><li>Đang mở app bên trong <b>Zalo / Facebook</b>: bấm dấu ⋮ (hoặc ···) rồi chọn mở bằng trình duyệt Chrome hoặc Safari.</li></ul><p>Cài xong quay lại app, bấm <b>Thử đọc</b>. Tên mục trong Cài đặt có thể hơi khác tuỳ hãng máy.</p></details>'+
@@ -2123,7 +2187,7 @@ $('#modal').addEventListener('click',function(e){
   else if(m==='prcon'){if(PR.busy){toast('⏳ Đang in — chờ in xong');return}prConnect().then(function(){if(modalKind==='print')openPrint(PR.st)})}
   else if(m==='prbt')prBluetooth(PR.st);
   else if(m==='ctpick'){var ctel=CT.tels[+b.dataset.i],ccb=CT.cb;closeModal();if(ccb&&ctel)ccb(CT.name,ctel)}
-  else if(m==='ctagain'){var acb=CT.cb;closeModal();if(acb)pickContact(acb)}
+  else if(m==='ctagain'){var acb=CT.cb;closeModal();if(acb)pickContact(acb,true)}
   else if(m==='ctpaste')ctPaste(CT.cb,true);
   else if(m==='ctclip')ctClip();
   else if(m==='ctgo')ctSubmit();
@@ -2251,7 +2315,7 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimesta
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 window.__cgpChay = true;
-const APP = "canga", TEN = "Cân Gà Pro", APP_VER = "2026-11-14-CGP1";
+const APP = "canga", TEN = "Cân Gà Pro", APP_VER = "2026-11-19-CGP2";
 const FB = { apiKey:"AIzaSyA_kjQ-CdASRkf50Glz3kQajlkD5qGWC4k", authDomain:"so-no-cc57a.firebaseapp.com",
   projectId:"so-no-cc57a", storageBucket:"so-no-cc57a.firebasestorage.app",
   messagingSenderId:"571694791559", appId:"1:571694791559:web:8e409728a520e2d370b122" };
@@ -3051,7 +3115,7 @@ setInterval(() => { if(!document.hidden && G.u){ danhGia(); if(Date.now() - (G.l
 <script type="module">
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-const APP_ID = "canga", APP_VERSION = "2026-11-14-CGP1";   /* = APP_VER của cổng tài khoản (số bản app Quản Trị đọc) */
+const APP_ID = "canga", APP_VERSION = "2026-11-19-CGP2";   /* = APP_VER của cổng tài khoản (số bản app Quản Trị đọc) */
 const FB = { apiKey:"AIzaSyA_kjQ-CdASRkf50Glz3kQajlkD5qGWC4k", authDomain:"so-no-cc57a.firebaseapp.com",
   projectId:"so-no-cc57a", storageBucket:"so-no-cc57a.firebasestorage.app",
   messagingSenderId:"571694791559", appId:"1:571694791559:web:8e409728a520e2d370b122" };
