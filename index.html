@@ -2417,7 +2417,7 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimesta
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 window.__cgpChay = true;
-const APP = "canga", TEN = "Cân Gà Pro", APP_VER = "2026-11-19-CGP4";
+const APP = "canga", TEN = "Cân Gà Pro", APP_VER = "2026-11-20-CGP5";
 const FB = { apiKey:"AIzaSyA_kjQ-CdASRkf50Glz3kQajlkD5qGWC4k", authDomain:"so-no-cc57a.firebaseapp.com",
   projectId:"so-no-cc57a", storageBucket:"so-no-cc57a.firebasestorage.app",
   messagingSenderId:"571694791559", appId:"1:571694791559:web:8e409728a520e2d370b122" };
@@ -2818,7 +2818,7 @@ function veGiaHan(){
   }
   if(st.ma === "het") h += '<div class="cgp-bao x">Hết hạn rồi nên app tạm khoá. <b>Dữ liệu phiếu cân trên máy vẫn còn nguyên</b> — gia hạn xong là dùng tiếp.</div>';
   else if(st.ma === "trong" || st.ma === "sai") h += '<div class="cgp-bao v">Tài khoản chưa được đặt hạn dùng. Gia hạn bên dưới, hoặc nhắn chủ phần mềm.</div>';
-  const unit = donGia(), b = nganHang(), m = THANG.indexOf(G.thang) >= 0 ? G.thang : 1, tong = giaGiaHan(unit, m), noi = (u.email || "") + " " + APP;
+  const unit = donGia(), b = nganHang(), m = THANG.indexOf(G.thang) >= 0 ? G.thang : 1, tong = giaGiaHan(unit, m), noi = "SEVQR " + (u.email || "") + " " + APP;   /* [CGP5] VietinBank chỉ báo cho SePay khi nội dung CK bắt đầu bằng SEVQR (đơn vẫn lưu noiDung cũ) */
   h += '<div class="cgp-card"><b>' + (st.ma === "chua" || st.ma === "trong" || st.ma === "sai" ? "Mua gói Cân Gà Pro" : "Gia hạn Cân Gà Pro") + "</b>"
     + '<div class="cgp-thang">' + THANG.map(x => '<button type="button" data-cgp="thang" data-m="' + x + '" class="' + (x === m ? "cgp-chon" : "") + '">' + x + " tháng" + (thangTang(x) > 0 ? " 🎁" : "") + "</button>").join("") + "</div>";
   if(!(unit > 0)) h += '<div class="cgp-bao v">Chủ phần mềm chưa đặt giá Cân Gà Pro. Nhắn tin hoặc gọi <b>' + hotTxt() + "</b> để được mở gói.</div></div>";
@@ -3217,7 +3217,7 @@ setInterval(() => { if(!document.hidden && G.u){ danhGia(); if(Date.now() - (G.l
 <script type="module">
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-const APP_ID = "canga", APP_VERSION = "2026-11-19-CGP4";   /* = APP_VER của cổng tài khoản (số bản app Quản Trị đọc) */
+const APP_ID = "canga", APP_VERSION = "2026-11-20-CGP5";   /* = APP_VER của cổng tài khoản (số bản app Quản Trị đọc) */
 const FB = { apiKey:"AIzaSyA_kjQ-CdASRkf50Glz3kQajlkD5qGWC4k", authDomain:"so-no-cc57a.firebaseapp.com",
   projectId:"so-no-cc57a", storageBucket:"so-no-cc57a.firebasestorage.app",
   messagingSenderId:"571694791559", appId:"1:571694791559:web:8e409728a520e2d370b122" };
